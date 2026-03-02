@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { TreeData, TreeNode } from '@/lib/types';
+import React, { useState } from 'react';
+import { TreeData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, RotateCcw, Check, X, ChevronRight } from 'lucide-react';
+import { ArrowLeft, RotateCcw, ChevronRight } from 'lucide-react';
 
 interface ProcessWizardProps {
   data: TreeData;
@@ -15,201 +15,211 @@ export function ProcessWizard({ data }: ProcessWizardProps) {
   const [currentId, setCurrentId] = useState<string>('start');
   const [history, setHistory] = useState<string[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState<'in' | 'back'>('in');
+  const [direction, setDirection] = useState<'in' | 'back' | 'out'>('in');
 
   const currentNode = data[currentId];
 
   if (!currentNode) {
     return (
       <div className="p-8 text-center border-2 border-dashed rounded-lg">
-        <p className="text-muted-foreground">Error: No se pudo cargar el inicio del protocolo.</p>
+        <p className="text-muted-foreground">Error: No se pudo cargar el nodo "{currentId}".</p>
         <Button onClick={() => setCurrentId('start')} className="mt-4">Reiniciar</Button>
       </div>
     );
   }
 
   const handleNext = (nextId: string) => {
-    setDirection('in');
+    setDirection('out');
     setIsAnimating(true);
     setTimeout(() => {
       setHistory(prev => [...prev, currentId]);
       setCurrentId(nextId);
+      setDirection('in');
       setIsAnimating(false);
     }, 200);
   };
 
   const handleBack = () => {
     if (history.length === 0) return;
-    setDirection('back');
+    setDirection('out');
     setIsAnimating(true);
     setTimeout(() => {
       const prevId = history[history.length - 1];
       setHistory(prev => prev.slice(0, -1));
       setCurrentId(prevId);
+      setDirection('back');
       setIsAnimating(false);
     }, 200);
   };
 
   const handleRestart = () => {
-    setDirection('in');
+    setDirection('out');
     setIsAnimating(true);
     setTimeout(() => {
       setHistory([]);
       setCurrentId('start');
+      setDirection('in');
       setIsAnimating(false);
     }, 200);
   };
 
+  const getBadgeStyles = () => {
+    switch (currentNode.type) {
+      case 'question': return 'bg-[#e8f0fe] text-[#1967d2]';
+      case 'process': return 'bg-[#fef9e0] text-[#b06000]';
+      case 'end': return currentNode.variant === 'ok' ? 'bg-[#e6f4ea] text-[#1e8e3e]' : 'bg-[#fce8e6] text-[#c5221f]';
+      default: return 'bg-slate-100 text-slate-600';
+    }
+  };
+
+  const getBorderColor = () => {
+    switch (currentNode.type) {
+      case 'question': return 'bg-[#1a73e8]';
+      case 'process': return 'bg-[#f9ab00]';
+      case 'end': return currentNode.variant === 'ok' ? 'bg-[#1e8e3e]' : 'bg-[#d93025]';
+      default: return 'bg-slate-300';
+    }
+  };
+
+  const getBadgeLabel = () => {
+    switch (currentNode.type) {
+      case 'question': return 'Pregunta';
+      case 'process': return 'Proceso';
+      case 'end': return currentNode.variant === 'ok' ? 'Resultado' : 'Alerta';
+      default: return 'Nodo';
+    }
+  };
+
   return (
-    <div className="flex flex-col h-full min-h-[450px]">
-      <div className="flex-grow flex items-center justify-center p-4">
-        <div 
+    <div className="flex flex-col h-full bg-[#f5f6fa] font-sans">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-10 mb-20 overflow-hidden">
+        <Card
           className={cn(
-            "w-full max-w-[520px] transition-all duration-300",
-            isAnimating 
-              ? (direction === 'in' ? "opacity-0 translate-x-12 scale-95" : "opacity-0 -translate-x-12 scale-95")
-              : "opacity-100 translate-x-0 scale-100"
+            "w-full max-w-[520px] p-10 shadow-2xl rounded-2xl border border-[#e8eaed] bg-white relative overflow-hidden transition-all duration-300",
+            direction === 'in' && "animate-in slide-in-from-right-12 fade-in duration-300",
+            direction === 'back' && "animate-in slide-in-from-left-12 fade-in duration-300",
+            direction === 'out' && "animate-out slide-out-to-left-12 fade-out duration-200",
+            isAnimating && "pointer-events-none"
           )}
         >
-          <Card className={cn(
-            "relative overflow-hidden p-8 border-t-4 shadow-xl",
-            currentNode.type === 'question' && "border-t-blue-500",
-            currentNode.type === 'process' && "border-t-amber-500",
-            currentNode.type === 'end' && (currentNode.variant === 'ok' ? "border-t-green-600" : "border-t-red-600")
+          {/* Accent Line */}
+          <div className={cn("absolute top-0 left-0 right-0 h-[3px]", getBorderColor())} />
+
+          {/* Type Badge */}
+          <div className={cn(
+            "inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.8px] px-2.5 py-1 rounded-full mb-6",
+            getBadgeStyles()
           )}>
-            {/* Badge */}
-            <div className={cn(
-              "inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6",
-              currentNode.type === 'question' && "bg-blue-50 text-blue-600",
-              currentNode.type === 'process' && "bg-amber-50 text-amber-600",
-              currentNode.type === 'end' && (currentNode.variant === 'ok' ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700")
-            )}>
-              <div className="w-1.5 h-1.5 rounded-full bg-current" />
-              {currentNode.type === 'question' ? 'Pregunta' : currentNode.type === 'process' ? 'Proceso' : 'Resultado'}
-            </div>
+            <div className="w-1.5 h-1.5 rounded-full bg-current" />
+            {getBadgeLabel()}
+          </div>
 
-            {/* Content */}
-            {currentNode.type === 'end' && currentNode.icon && (
-              <span className="text-5xl block mb-4">{currentNode.icon}</span>
-            )}
+          {/* Icon for end nodes */}
+          {currentNode.type === 'end' && currentNode.icon && (
+            <div className="text-5xl mb-4 leading-none">{currentNode.icon}</div>
+          )}
 
-            <h2 className="text-2xl font-bold text-slate-900 leading-tight mb-2">
-              {currentNode.title}
-            </h2>
+          {/* Title */}
+          <h2 className="text-[22px] font-bold text-[#202124] leading-[1.4] mb-2">
+            {currentNode.title}
+          </h2>
 
-            {currentNode.hint && (
-              <p className="text-sm text-slate-500 mb-8 leading-relaxed">
-                {currentNode.hint}
-              </p>
-            )}
+          {/* Hint / Description */}
+          {currentNode.hint && (
+            <p className="text-[13px] text-[#80868b] leading-[1.5] mb-8">
+              {currentNode.hint}
+            </p>
+          )}
 
-            {currentNode.type === 'process' && (
-              <div className="space-y-3 mb-8">
-                 {currentNode.steps?.map((step, i) => (
-                   <div key={i} className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
-                     <div className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                       {i + 1}
-                     </div>
-                     <p className="text-sm text-slate-700 leading-snug">{step}</p>
-                   </div>
-                 ))}
-              </div>
-            )}
-
-            {currentNode.type === 'end' && (
-              <p className="text-slate-600 leading-relaxed mb-4">
-                {currentNode.message}
-              </p>
-            )}
-
-            {/* Buttons */}
-            <div className="flex flex-col gap-3 mt-4">
-              {currentNode.type === 'question' && (
-                <>
-                  {currentNode.yes && currentNode.no ? (
-                    <>
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-between h-14 text-base font-medium border-2 hover:border-green-600 hover:bg-green-50 group transition-all"
-                        onClick={() => handleNext(currentNode.yes!)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-green-100 text-green-700 flex items-center justify-center">✓</div>
-                          Sí
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-green-600" />
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-between h-14 text-base font-medium border-2 hover:border-red-600 hover:bg-red-50 group transition-all"
-                        onClick={() => handleNext(currentNode.no!)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center">✗</div>
-                          No
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-red-600" />
-                      </Button>
-                    </>
-                  ) : (
-                    currentNode.options?.map((opt, i) => (
-                      <Button 
-                        key={i}
-                        variant="outline" 
-                        className="w-full justify-between h-14 text-base font-medium border-2 hover:border-blue-600 hover:bg-blue-50 group transition-all"
-                        onClick={() => handleNext(opt.next)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">{opt.icon}</div>
-                          {opt.label}
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-blue-600" />
-                      </Button>
-                    ))
-                  )}
-                </>
-              )}
-
-              {currentNode.type === 'process' && currentNode.next && (
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-between h-14 text-base font-medium border-2 hover:border-green-600 hover:bg-green-50 group transition-all"
-                  onClick={() => handleNext(currentNode.next!)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-green-100 text-green-700 flex items-center justify-center">✓</div>
-                    Pasos completados — Continuar
+          {/* Process Steps */}
+          {currentNode.type === 'process' && (
+            <div className="flex flex-col gap-3 mb-7">
+              {currentNode.steps?.map((step, i) => (
+                <div key={i} className="flex items-start gap-3 p-3.5 bg-[#f8f9fa] rounded-lg">
+                  <div className="w-[22px] h-[22px] bg-[#f9ab00] text-white flex items-center justify-center text-[11px] font-bold rounded-full shrink-0 mt-[1px]">
+                    {i + 1}
                   </div>
-                  <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-green-600" />
-                </Button>
-              )}
+                  <p className="text-[13px] text-[#3c4043] leading-[1.5]">{step}</p>
+                </div>
+              ))}
             </div>
-          </Card>
-        </div>
+          )}
+
+          {/* End Message */}
+          {currentNode.type === 'end' && (
+            <div className="text-[14px] text-[#5f6368] leading-[1.6]">
+              {currentNode.message}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex flex-col gap-2.5 mt-8">
+            {currentNode.type === 'question' && (
+              <>
+                {currentNode.yes && currentNode.no ? (
+                  <>
+                    <button
+                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#1e8e3e] hover:bg-[#f5fbf6] hover:translate-y-[-1px] group"
+                      onClick={() => handleNext(currentNode.yes!)}
+                    >
+                      <div className="w-[34px] h-[34px] rounded-lg bg-[#e6f4ea] flex items-center justify-center text-[16px]">✓</div>
+                      <span>Sí</span>
+                      <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#1e8e3e] group-hover:right-3 transition-all">›</span>
+                    </button>
+                    <button
+                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#d93025] hover:bg-[#fef7f7] hover:translate-y-[-1px] group"
+                      onClick={() => handleNext(currentNode.no!)}
+                    >
+                      <div className="w-[34px] h-[34px] rounded-lg bg-[#fce8e6] flex items-center justify-center text-[16px]">✗</div>
+                      <span>No</span>
+                      <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#d93025] group-hover:right-3 transition-all">›</span>
+                    </button>
+                  </>
+                ) : (
+                  currentNode.options?.map((opt, i) => (
+                    <button
+                      key={i}
+                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#1a73e8] hover:bg-[#f8fbff] hover:translate-y-[-1px] group"
+                      onClick={() => handleNext(opt.next)}
+                    >
+                      <div className="w-[34px] h-[34px] rounded-lg bg-[#e8f0fe] flex items-center justify-center text-[16px]">{opt.icon}</div>
+                      <span>{opt.label}</span>
+                      <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#1a73e8] group-hover:right-3 transition-all">›</span>
+                    </button>
+                  ))
+                )}
+              </>
+            )}
+
+            {currentNode.type === 'process' && currentNode.next && (
+              <button
+                className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#1e8e3e] hover:bg-[#f5fbf6] hover:translate-y-[-1px] group"
+                onClick={() => handleNext(currentNode.next!)}
+              >
+                <div className="w-[34px] h-[34px] rounded-lg bg-[#e6f4ea] flex items-center justify-center text-[16px]">✓</div>
+                <span>Pasos completados — Continuar</span>
+                <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#1e8e3e] group-hover:right-3 transition-all">›</span>
+              </button>
+            )}
+          </div>
+        </Card>
       </div>
 
-      {/* Footer Navigation */}
-      <div className="mt-auto border-t p-4 flex items-center gap-4 bg-white/80 backdrop-blur sticky bottom-0">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={handleBack} 
+      {/* Bottom Nav */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#e8eaed] p-3.5 px-8 flex items-center gap-3 z-[100]">
+        <button
+          className="flex items-center gap-1.5 p-2 px-4 border-[1.5px] border-[#e8eaed] rounded-lg bg-white text-[13px] font-medium text-[#5f6368] transition-all hover:border-[#bdc1c6] hover:text-[#202124] disabled:opacity-30 disabled:pointer-events-none"
+          onClick={handleBack}
           disabled={history.length === 0 || isAnimating}
-          className="gap-2 text-slate-500 font-medium h-10 px-4"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Atrás
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={handleRestart} 
-          disabled={isAnimating}
-          className="ml-auto gap-2 text-slate-400 hover:text-slate-900 font-medium h-10 px-4"
+          <ArrowLeft className="h-4 w-4" /> Atrás
+        </button>
+        <button
+          className="ml-auto flex items-center gap-1.5 p-2 px-4 border-none rounded-lg bg-[#f1f3f4] text-[13px] font-medium text-[#5f6368] transition-all hover:bg-[#e8eaed] hover:text-[#202124]"
+          onClick={handleRestart}
         >
-          <RotateCcw className="h-4 w-4" />
-          Reiniciar
-        </Button>
+          <RotateCcw className="h-4 w-4" /> Reiniciar
+        </button>
       </div>
     </div>
   );

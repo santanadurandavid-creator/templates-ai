@@ -8,8 +8,8 @@
  * - MapProcessOutput - The return type for the mapProcess function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const MapProcessInputSchema = z.object({
   processDescription: z.string().describe('El texto crudo o desordenado que describe un proceso.'),
@@ -30,7 +30,7 @@ export type MapProcessOutput = z.infer<typeof MapProcessOutputSchema>;
 
 export async function mapProcess(
   input: MapProcessInput
-): Promise<{ success: boolean; data?: MapProcessOutput, error?: string}> {
+): Promise<{ success: boolean; data?: MapProcessOutput, error?: string }> {
   try {
     const output = await mapProcessFlow(input);
     return { success: true, data: output };
@@ -65,7 +65,7 @@ Ejemplo de JSON para 'description':
 Convierte el siguiente texto en este formato estructurado:
 {{{processDescription}}}
 
-Devuelve el JSON como una cadena de texto (string) dentro del campo 'description'.`,
+Devuelve el JSON como una cadena de texto (string) pura dentro del campo 'description'. NO incluyas introducciones, ni bloques de código markdown, ni texto explicativo antes o después del JSON. Solo el objeto JSON.`,
 });
 
 const mapProcessFlow = ai.defineFlow(
@@ -75,7 +75,7 @@ const mapProcessFlow = ai.defineFlow(
     outputSchema: MapProcessOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );

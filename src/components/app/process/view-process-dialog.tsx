@@ -16,13 +16,18 @@ interface ViewProcessDialogProps {
 export function ViewProcessDialog({ process, open, onOpenChange }: ViewProcessDialogProps) {
     const treeData = useMemo(() => {
         if (!process?.description) return null;
-        const trimmed = process.description.trim();
+        let content = process.description.trim();
+
+        // Intentar encontrar el primer '{' y el último '}' para extraer solo el JSON
+        const startIdx = content.indexOf('{');
+        const endIdx = content.lastIndexOf('}');
+
+        if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+            content = content.substring(startIdx, endIdx + 1);
+        }
+
         try {
-            // Intentar parsear como JSON para el Wizard
-            if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-                return JSON.parse(trimmed) as TreeData;
-            }
-            return null;
+            return JSON.parse(content) as TreeData;
         } catch (e) {
             console.error("Error al parsear el árbol de decisión", e);
             return null;
@@ -46,7 +51,7 @@ export function ViewProcessDialog({ process, open, onOpenChange }: ViewProcessDi
                         </div>
                     )}
                 </DialogHeader>
-                
+
                 {treeData ? (
                     <div className="flex flex-col h-full bg-slate-50">
                         <div className="p-4 border-b bg-white flex items-center justify-between shadow-sm z-10">
