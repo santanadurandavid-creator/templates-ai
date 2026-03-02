@@ -1,0 +1,21 @@
+{
+  "name": "Studio Genie",
+  "short_name": "Studio Genie",
+  "description": "Productivity app for support agents",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ebf4fa",
+  "background_color": "#ebf4fa",
+  "display": "standalone",
+  "start_url": "/"
+}
