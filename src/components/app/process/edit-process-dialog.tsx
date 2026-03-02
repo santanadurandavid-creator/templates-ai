@@ -8,18 +8,20 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ChevronsUpDown, Trash2 } from "lucide-react";
+import { Check, ChevronsUpDown, Trash2, Sparkles, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { mapProcess } from "@/ai/flows/map-process-flow";
+import { useToast } from "@/hooks/use-toast";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -46,7 +48,9 @@ interface EditProcessDialogProps {
 
 export function EditProcessDialog({ process, allProcesses, open, onOpenChange, onSave, onDelete }: EditProcessDialogProps) {
     const [isTagPopoverOpen, setTagPopoverOpen] = useState(false);
-    
+    const [isRegenerating, setIsRegenerating] = useState(false);
+    const { toast } = useToast();
+
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -68,6 +72,51 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
         onSave(data, process?.id);
     };
 
+    const handleRegenerate = async () => {
+        const currentDescription = form.getValues('description');
+        if (!currentDescription || currentDescription.length < 10) {
+            toast({
+                variant: 'destructive',
+                title: 'Contenido insuficiente',
+                description: 'La descripción es demasiado corta para regenerar un flujo.',
+            });
+            return;
+        }
+
+        setIsRegenerating(true);
+        const { id: toastId, update } = toast({ title: 'Regenerando flujo con IA...' });
+
+        try {
+            const result = await mapProcess({
+                processDescription: currentDescription,
+                existingProcesses: allProcesses,
+            });
+
+            if (result.success && result.data) {
+                form.setValue('description', result.data.description);
+                if (!form.getValues('title')) form.setValue('title', result.data.title);
+                if (!form.getValues('tag')) form.setValue('tag', result.data.tag);
+
+                update({
+                    id: toastId,
+                    title: '¡Flujo regenerado!',
+                    description: 'La IA ha generado una nueva estructura para este proceso.',
+                });
+            } else {
+                throw new Error(result.error || 'Error al regenerar el flujo.');
+            }
+        } catch (error: any) {
+            update({
+                id: toastId,
+                variant: 'destructive',
+                title: 'Error de regeneración',
+                description: error.message,
+            });
+        } finally {
+            setIsRegenerating(false);
+        }
+    };
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
@@ -87,72 +136,72 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                                 </FormItem>
                             )}
                         />
-                         <FormField
+                        <FormField
                             control={form.control}
                             name="tag"
                             render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel>Etiqueta (Tag)</FormLabel>
-                                <Popover open={isTagPopoverOpen} onOpenChange={setTagPopoverOpen}>
-                                <PopoverTrigger asChild>
-                                    <FormControl>
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        className={cn(
-                                        "w-full justify-between",
-                                        !field.value && "text-muted-foreground"
-                                        )}
-                                    >
-                                        {field.value
-                                        ? tags.find(
-                                            (tag) => tag === field.value
-                                            ) || field.value
-                                        : "Seleccionar etiqueta"}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                                    <Command>
-                                    <CommandInput 
-                                        placeholder="Buscar o crear etiqueta..."
-                                        onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                            field.onChange(e.target.value);
-                                        }}
-                                        />
-                                    <CommandList>
-                                        <CommandEmpty>No se encontró la etiqueta. Se creará una nueva.</CommandEmpty>
-                                        <CommandGroup>
-                                        <ScrollArea className="h-48">
-                                            {tags.map((tag) => (
-                                            <CommandItem
-                                                value={tag}
-                                                key={tag}
-                                                onSelect={() => {
-                                                form.setValue("tag", tag);
-                                                setTagPopoverOpen(false);
-                                                }}
-                                            >
-                                                <Check
-                                                className={cn(
-                                                    "mr-2 h-4 w-4",
-                                                    tag === field.value
-                                                    ? "opacity-100"
-                                                    : "opacity-0"
-                                                )}
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Etiqueta (Tag)</FormLabel>
+                                    <Popover open={isTagPopoverOpen} onOpenChange={setTagPopoverOpen}>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    className={cn(
+                                                        "w-full justify-between",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value
+                                                        ? tags.find(
+                                                            (tag) => tag === field.value
+                                                        ) || field.value
+                                                        : "Seleccionar etiqueta"}
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                                            <Command>
+                                                <CommandInput
+                                                    placeholder="Buscar o crear etiqueta..."
+                                                    onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                        field.onChange(e.target.value);
+                                                    }}
                                                 />
-                                                {tag}
-                                            </CommandItem>
-                                            ))}
-                                        </ScrollArea>
-                                        </CommandGroup>
-                                    </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                                </Popover>
-                                <FormMessage />
-                            </FormItem>
+                                                <CommandList>
+                                                    <CommandEmpty>No se encontró la etiqueta. Se creará una nueva.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        <ScrollArea className="h-48">
+                                                            {tags.map((tag) => (
+                                                                <CommandItem
+                                                                    value={tag}
+                                                                    key={tag}
+                                                                    onSelect={() => {
+                                                                        form.setValue("tag", tag);
+                                                                        setTagPopoverOpen(false);
+                                                                    }}
+                                                                >
+                                                                    <Check
+                                                                        className={cn(
+                                                                            "mr-2 h-4 w-4",
+                                                                            tag === field.value
+                                                                                ? "opacity-100"
+                                                                                : "opacity-0"
+                                                                        )}
+                                                                    />
+                                                                    {tag}
+                                                                </CommandItem>
+                                                            ))}
+                                                        </ScrollArea>
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                </FormItem>
                             )}
                         />
                         <FormField
@@ -160,7 +209,24 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                             name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Descripción / Pasos</FormLabel>
+                                    <div className="flex items-center justify-between">
+                                        <FormLabel>Descripción / Pasos</FormLabel>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 gap-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                                            onClick={handleRegenerate}
+                                            disabled={isRegenerating}
+                                        >
+                                            {isRegenerating ? (
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                            ) : (
+                                                <Sparkles className="h-3 w-3" />
+                                            )}
+                                            Regenerar flujo (IA)
+                                        </Button>
+                                    </div>
                                     <FormControl>
                                         <Textarea
                                             placeholder="Describe los pasos detalladamente..."
@@ -172,7 +238,7 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                                 </FormItem>
                             )}
                         />
-                        
+
                         <DialogFooter>
                             {process && (
                                 <AlertDialog>
@@ -195,8 +261,8 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                                     </AlertDialogContent>
                                 </AlertDialog>
                             )}
-                             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancelar</Button>
-                             <Button type="submit">Guardar</Button>
+                            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancelar</Button>
+                            <Button type="submit">Guardar</Button>
                         </DialogFooter>
                     </form>
                 </Form>
