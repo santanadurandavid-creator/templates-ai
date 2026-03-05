@@ -43,15 +43,15 @@ export function TemplateSearchAndFilters({
         <Input
           type="search"
           placeholder="Buscar..."
-          className="pl-9 h-9 text-xs"
+          className="pl-9 h-8 text-[11px] sm:text-xs"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
       </div>
       <div className="flex items-center gap-2">
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[110px] sm:w-[150px] h-9 text-xs">
+          <SelectTrigger className="w-[110px] sm:w-[150px] h-8 text-[11px] sm:text-xs">
             <SelectValue placeholder="Cat." />
           </SelectTrigger>
           <SelectContent>
@@ -66,10 +66,10 @@ export function TemplateSearchAndFilters({
           variant="outline"
           size="icon"
           onClick={onAddNew}
-          className="h-9 w-9 shrink-0 border-accent/20 text-accent hover:bg-accent/10"
+          className="h-8 w-8 shrink-0 border-accent/20 text-accent hover:bg-accent/10"
           title="Añadir Nueva Plantilla"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3.5 w-3.5" />
         </Button>
       </div>
     </div>

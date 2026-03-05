@@ -235,14 +235,14 @@ export function ImportExport() {
         accept=".json"
         onChange={handleFileChange}
       />
-      <Button variant="outline" size="sm" asChild className="h-7 px-2 sm:px-3 text-[10px] sm:text-xs">
+      <Button variant="outline" size="sm" asChild className="h-6 px-1.5 sm:px-2 text-[9px] sm:text-[10px]">
         <label htmlFor="import-file" className="cursor-pointer">
-          <Upload className="h-3.5 w-3.5 sm:mr-1.5" />
+          <Upload className="h-3 w-3 sm:mr-1" />
           <span className="hidden sm:inline">Importar</span>
         </label>
       </Button>
-      <Button variant="outline" size="sm" onClick={handleExport} className="h-7 px-2 sm:px-3 text-[10px] sm:text-xs">
-        <Download className="h-3.5 w-3.5 sm:mr-1.5" />
+      <Button variant="outline" size="sm" onClick={handleExport} className="h-6 px-1.5 sm:px-2 text-[9px] sm:text-[10px]">
+        <Download className="h-3 w-3 sm:mr-1" />
         <span className="hidden sm:inline">Exportar</span>
       </Button>
     </>

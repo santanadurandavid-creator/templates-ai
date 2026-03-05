@@ -235,7 +235,7 @@ export default function TemplatesPage() {
         <div className="flex-1 overflow-y-auto space-y-3 pt-2 px-2 pb-24">
 
           <Card className="border-accent/20">
-            <CardContent className="pt-3 space-y-3">
+            <CardContent className="p-2.5 pt-2 space-y-3">
               <div className="flex flex-col space-y-3">
                 <div className="flex items-center justify-between gap-2">
                   {/* Carrusel Real de Categorías */}

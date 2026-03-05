@@ -32,8 +32,8 @@ export function AppHeader() {
           <div className="flex items-center space-x-1">
             <Dialog>
               <DialogTrigger asChild>
-                <button className="flex items-center px-1.5 sm:px-2 h-7 rounded-md hover:bg-accent/10 transition-colors text-[10px] sm:text-xs font-medium text-muted-foreground hover:text-foreground">
-                  <Search className="h-3.5 w-3.5 sm:mr-1.5" />
+                <button className="flex items-center px-1.5 h-6 rounded-md hover:bg-accent/10 transition-colors text-[9px] sm:text-[10px] font-medium text-muted-foreground hover:text-foreground">
+                  <Search className="h-3 w-3 sm:mr-1" />
                   <span className="hidden sm:inline">Cuentas</span>
                 </button>
               </DialogTrigger>
@@ -44,16 +44,16 @@ export function AppHeader() {
                 <Input placeholder="Buscar cuenta... (placeholder)" />
               </DialogContent>
             </Dialog>
-            <button onClick={() => setFollowUpModalOpen(true)} className="flex items-center px-1.5 sm:px-2 h-7 rounded-md hover:bg-accent/10 transition-colors text-[10px] sm:text-xs font-medium text-muted-foreground hover:text-foreground">
-              <UserCheck className="h-3.5 w-3.5 sm:mr-1.5" />
+            <button onClick={() => setFollowUpModalOpen(true)} className="flex items-center px-1.5 h-6 rounded-md hover:bg-accent/10 transition-colors text-[9px] sm:text-[10px] font-medium text-muted-foreground hover:text-foreground">
+              <UserCheck className="h-3 w-3 sm:mr-1" />
               <span className="hidden sm:inline">Seguimientos</span>
             </button>
             <ImportExport />
           </div>
 
           <AITemplateModal open={isAiModalOpen} onOpenChange={setAiModalOpen}>
-            <Button size="sm" className="h-7 text-[10px] sm:text-xs px-2 sm:px-3">
-              <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+            <Button size="sm" className="h-6 text-[9px] sm:text-[10px] px-1.5 sm:px-2">
+              <Sparkles className="mr-1 h-3 w-3" />
               <span className="hidden sm:inline">Generador IA</span>
               <span className="inline sm:hidden">IA</span>
             </Button>
@@ -64,17 +64,17 @@ export function AppHeader() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="h-7 w-7 transition-colors hover:bg-accent/10 hover:text-accent"
+            className="h-6 w-6 transition-colors hover:bg-accent/10 hover:text-accent"
             title={mounted ? (isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro') : 'Cargando tema...'}
           >
             {mounted ? (
               isDarkMode ? (
-                <Sun className="h-5 w-5 text-yellow-400" />
+                <Sun className="h-3.5 w-3.5 text-yellow-400" />
               ) : (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-3.5 w-3.5" />
               )
             ) : (
-              <div className="h-5 w-5" /> // Placeholder to avoid hydration mismatch
+              <div className="h-3.5 w-3.5" /> // Placeholder to avoid hydration mismatch
             )}
           </Button>
 
