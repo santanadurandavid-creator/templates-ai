@@ -9,9 +9,10 @@ import { ArrowLeft, RotateCcw, ChevronRight } from 'lucide-react';
 
 interface ProcessWizardProps {
   data: TreeData;
+  onClose?: () => void;
 }
 
-export function ProcessWizard({ data }: ProcessWizardProps) {
+export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
   const [currentId, setCurrentId] = useState<string>('start');
   const [history, setHistory] = useState<string[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -218,10 +219,13 @@ export function ProcessWizard({ data }: ProcessWizardProps) {
         <button
           className="flex items-center gap-1.5 p-2 px-3 sm:px-4 border-none rounded-lg bg-[#fce8e6] text-[12px] sm:text-[13px] font-medium text-[#c5221f] transition-all hover:bg-[#fadad7]"
           onClick={() => {
-            const closeBtn = document.querySelector('[role="dialog"] button[aria-label="Close"]') as HTMLButtonElement;
-            if (closeBtn) closeBtn.click();
-            // Fallback en caso de que no lo encuentre (ej: si no es un Dialog de Radix exactamente así)
-            window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+            if (onClose) {
+              onClose();
+            } else {
+              const closeBtn = document.querySelector('[role="dialog"] button[aria-label="Close"]') as HTMLButtonElement;
+              if (closeBtn) closeBtn.click();
+              window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+            }
           }}
         >
           <RotateCcw className="h-4 w-4 rotate-45" /> Cerrar

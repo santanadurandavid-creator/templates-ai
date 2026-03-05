@@ -92,7 +92,10 @@ export function ViewProcessDialog({ process, open, onOpenChange, onRegenerate, i
                             <Badge variant="outline" className="ml-2 shrink-0 border-accent/20 text-accent">{process.tag}</Badge>
                         </div>
                         <div className="flex-1 overflow-y-auto">
-                            <ProcessWizard data={treeData} />
+                            <ProcessWizard
+                                data={treeData}
+                                onClose={() => onOpenChange(false)}
+                            />
                         </div>
                     </div>
                 ) : (
