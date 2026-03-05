@@ -42,7 +42,7 @@ export function TemplateCard({ template, onCopy, onEdit, onDelete, onRephrase, o
   };
 
   return (
-    <TooltipProvider delayDuration={4000}>
+    <TooltipProvider delayDuration={3000}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Card
