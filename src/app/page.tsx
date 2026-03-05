@@ -16,7 +16,7 @@ import { ManageQuickCategoriesDialog } from '@/components/app/manage-quick-categ
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Copy, Settings, Plus, Pencil, Check } from 'lucide-react';
+import { Copy, Settings, Plus, Pencil, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn, eventBus } from '@/lib/utils';
 import { EditTemplateDialog } from '@/components/app/edit-template-dialog';
 import { rephraseTemplate } from '@/ai/flows/rephrase-template-flow';
@@ -40,6 +40,7 @@ export default function TemplatesPage() {
   const [editingQuickTemplate, setEditingQuickTemplate] = useState<Template | null>(null);
   const [isManageCategoriesOpen, setManageCategoriesOpen] = useState(false);
   const [isQuickEditMode, setIsQuickEditMode] = useState(false);
+  const [isQuickActionsExpanded, setIsQuickActionsExpanded] = useState(false);
 
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
@@ -252,37 +253,55 @@ export default function TemplatesPage() {
                     </Carousel>
                   </div>
 
-                  {/* Acciones de Notas Rápidas */}
-                  <div className="flex items-center gap-1.5 shrink-0 pl-1 border-l ml-1 border-accent/10">
-                    <Button
-                      variant={isQuickEditMode ? "default" : "ghost"}
-                      size="icon"
-                      className={cn(
-                        "h-8 w-8 transition-all shrink-0",
-                        isQuickEditMode ? "animate-pulse shadow-md" : "text-muted-foreground hover:text-accent hover:bg-accent/10"
-                      )}
-                      onClick={() => setIsQuickEditMode(!isQuickEditMode)}
-                      title={isQuickEditMode ? "Finalizar Edición" : "Editar Cuadrícula"}
-                    >
-                      {isQuickEditMode ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
-                    </Button>
+                  {/* Acciones de Notas Rápidas Colapsables */}
+                  <div className="flex items-center gap-1.5 shrink-0 pl-1 border-l ml-1 border-accent/10 overflow-hidden">
+                    <div className={cn(
+                      "flex items-center gap-1.5 transition-all duration-300 ease-in-out",
+                      (isQuickActionsExpanded || isQuickEditMode) ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 w-0"
+                    )}>
+                      <Button
+                        variant={isQuickEditMode ? "default" : "ghost"}
+                        size="icon"
+                        className={cn(
+                          "h-8 w-8 transition-all shrink-0",
+                          isQuickEditMode ? "animate-pulse shadow-md" : "text-muted-foreground hover:text-accent hover:bg-accent/10"
+                        )}
+                        onClick={() => setIsQuickEditMode(!isQuickEditMode)}
+                        title={isQuickEditMode ? "Finalizar Edición" : "Editar Cuadrícula"}
+                      >
+                        {isQuickEditMode ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-accent hover:bg-accent/10 shrink-0"
+                        onClick={() => setManageCategoriesOpen(true)}
+                        title="Gestionar Categorías"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 border-accent/20 text-accent hover:bg-accent/10 shrink-0"
+                        onClick={() => handleOpenQuickTemplateDialog(null)}
+                        title="Añadir Nota Rápida"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-accent hover:bg-accent/10 shrink-0"
-                      onClick={() => setManageCategoriesOpen(true)}
-                      title="Gestionar Categorías"
+                      className={cn(
+                        "h-8 w-8 text-accent hover:bg-accent/10 shrink-0 transition-transform duration-300",
+                        (isQuickActionsExpanded || isQuickEditMode) && "rotate-180"
+                      )}
+                      onClick={() => setIsQuickActionsExpanded(!isQuickActionsExpanded)}
+                      title={isQuickActionsExpanded ? "Contraer" : "Acciones"}
                     >
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 border-accent/20 text-accent hover:bg-accent/10 shrink-0"
-                      onClick={() => handleOpenQuickTemplateDialog(null)}
-                      title="Añadir Nota Rápida"
-                    >
-                      <Plus className="h-4 w-4" />
+                      <ChevronLeft className="h-5 w-5" />
                     </Button>
                   </div>
                 </div>
