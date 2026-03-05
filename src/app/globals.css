@@ -8,25 +8,29 @@ body {
 
 @layer base {
   :root {
-    --background: 210 40% 98%; /* Light Gray */
-    --foreground: 222.2 47.4% 11.2%; /* Slate 900 */
+    --background: 210 40% 98%;
+    /* Light Gray */
+    --foreground: 222.2 47.4% 11.2%;
+    /* Slate 900 */
     --card: 210 40% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
     --popover: 210 40% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
-    --primary: 222.2 47.4% 11.2%; /* Slate 900 */
+    --primary: 222.2 47.4% 11.2%;
+    /* Slate 900 */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 217.2 91.2% 59.8%; /* Blue 500 */
+    --accent: 215 25% 40%;
+    /* Grayish Blue / Slate */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 217.2 91.2% 59.8%; /* Blue 500 */
+    --ring: 215 25% 40%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -43,19 +47,21 @@ body {
     --card-foreground: 210 40% 95%;
     --popover: 203 27% 19%;
     --popover-foreground: 210 40% 95%;
-    --primary: 199 80% 68%;
+    --primary: 203 20% 75%;
+    /* Grayish Blue suave */
     --primary-foreground: 203 27% 12%;
     --secondary: 203 27% 25%;
     --secondary-foreground: 210 40% 90%;
     --muted: 203 27% 24%;
     --muted-foreground: 210 20% 65%;
-    --accent: 199 80% 60%;
+    --accent: 203 20% 60%;
+    /* Grayish Blue acentuado */
     --accent-foreground: 203 27% 12%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
     --border: 203 27% 30%;
     --input: 203 27% 28%;
-    --ring: 199 80% 60%;
+    --ring: 203 20% 60%;
     --chart-1: 199 80% 60%;
     --chart-2: 160 60% 50%;
     --chart-3: 30 80% 55%;
@@ -68,6 +74,7 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
