@@ -49,10 +49,6 @@ export function AppHeader() {
               <span className="hidden sm:inline">Seguimientos</span>
             </Button>
             <ImportExport />
-            <Button variant="outline" size="sm" onClick={handleAddQuickTemplate} className="px-2 sm:px-3">
-              <Plus className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Plantilla Rápida</span>
-            </Button>
           </div>
 
           <AITemplateModal open={isAiModalOpen} onOpenChange={setAiModalOpen}>
