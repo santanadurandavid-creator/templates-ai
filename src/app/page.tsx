@@ -218,21 +218,21 @@ export default function TemplatesPage() {
             <CardContent className="pt-6 space-y-4">
               <div className="flex flex-col space-y-3">
                 <div className="flex items-center justify-between gap-2">
-                  {/* Lista Horizontal de Categorías */}
-                  <div className="flex-1 overflow-x-auto no-scrollbar scroll-smooth">
-                    <div className="flex items-center gap-1.5 pb-1">
+                  {/* Lista Horizontal de Categorías (Estilo Carrusel) */}
+                  <div className="flex-1 overflow-x-auto no-scrollbar scroll-smooth cursor-grab active:cursor-grabbing">
+                    <div className="flex items-center gap-1.5 pb-1 select-none">
                       {quickCategories.map(cat => (
                         <button
                           key={cat}
                           onClick={() => setSelectedQuickCategory(cat)}
                           className={cn(
-                            "whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-semibold transition-all border shrink-0",
+                            "whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all border shrink-0",
                             selectedQuickCategory === cat
-                              ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                              : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted"
+                              ? "bg-primary text-primary-foreground border-primary shadow-md transform scale-105"
+                              : "bg-muted/40 text-muted-foreground border-transparent hover:bg-muted/70 hover:scale-105"
                           )}
                         >
-                          {cat === 'All' ? 'Todas las Notas' : cat}
+                          {cat === 'All' ? '⚡ Todas' : cat}
                         </button>
                       ))}
                     </div>
