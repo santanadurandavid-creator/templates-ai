@@ -40,6 +40,7 @@ export default function TemplatesPage() {
 
   const [isRephraseSheetOpen, setRephraseSheetOpen] = useState(false);
   const [rephrasingTemplate, setRephrasingTemplate] = useState<Template | null>(null);
+  const [showTopUsed, setShowTopUsed] = useLocalStorage('show-top-used', true);
 
   const { copy } = useCopyToClipboard();
   const { toast, dismiss } = useToast();
@@ -213,11 +214,11 @@ export default function TemplatesPage() {
 
           <Card className="border-accent/20">
             <CardContent className="pt-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-row items-center justify-between gap-2">
                 {/* Selector de categoría y botón añadir */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 overflow-hidden">
                   <Select value={selectedQuickCategory} onValueChange={setSelectedQuickCategory}>
-                    <SelectTrigger className="w-[140px] sm:w-[180px] h-9 text-xs font-semibold">
+                    <SelectTrigger className="w-[130px] sm:w-[180px] h-9 text-xs font-semibold shrink-0">
                       <SelectValue placeholder="Notas Rápidas" />
                     </SelectTrigger>
                     <SelectContent>
@@ -239,8 +240,8 @@ export default function TemplatesPage() {
                   </Button>
                 </div>
 
-                {/* Botón Gestionar Categorías */}
-                <div className="flex items-center justify-end gap-2">
+                {/* Botón Gestionar Categorías y Toggle Top 7 */}
+                <div className="flex items-center gap-2 shrink-0">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -250,6 +251,16 @@ export default function TemplatesPage() {
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
+                  {!showTopUsed && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowTopUsed(true)}
+                      className="h-8 text-[10px] sm:text-xs px-2"
+                    >
+                      Ver Top 7
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -269,7 +280,14 @@ export default function TemplatesPage() {
             </CardContent>
           </Card>
 
-          <TopUsedTemplates templates={uniqueTemplates} isLoading={isLoading} onCopy={handleCopy} />
+          {showTopUsed && (
+            <TopUsedTemplates
+              templates={uniqueTemplates}
+              isLoading={isLoading}
+              onCopy={handleCopy}
+              onHide={() => setShowTopUsed(false)}
+            />
+          )}
 
           <Separator />
 
