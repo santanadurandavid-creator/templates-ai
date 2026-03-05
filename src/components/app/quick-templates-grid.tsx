@@ -84,7 +84,7 @@ const QuickTemplateButton: React.FC<QuickTemplateButtonProps> = ({ template, ind
                 onClick={handleCopy}
                 style={{ backgroundColor: template.color || '#4A779D' }}
                 className={cn(
-                  'w-full p-0 text-lg font-bold text-white shadow-md transition-all aspect-square',
+                  'w-full p-0 text-sm font-bold text-white shadow-md transition-all aspect-square',
                   isEditMode ? 'cursor-default' : 'hover:brightness-110 cursor-pointer'
                 )}
                 {...(isEditMode ? {} : attributes)}
@@ -178,9 +178,9 @@ export function QuickTemplatesGrid({ templates, isLoading, isEditMode, onCopy, o
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-6 sm:grid-cols-7 lg:grid-cols-8 gap-2">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <Skeleton key={index} className="w-full aspect-square" />
+      <div className="grid grid-cols-8 sm:grid-cols-9 lg:grid-cols-11 gap-1.5">
+        {Array.from({ length: 11 }).map((_, index) => (
+          <Skeleton key={index} className="w-full aspect-square rounded-md" />
         ))}
       </div>
     );
@@ -220,7 +220,7 @@ export function QuickTemplatesGrid({ templates, isLoading, isEditMode, onCopy, o
         strategy={rectSortingStrategy}
         disabled={!isEditMode}
       >
-        <div className="grid grid-cols-6 sm:grid-cols-7 lg:grid-cols-8 gap-2">
+        <div className="grid grid-cols-8 sm:grid-cols-9 lg:grid-cols-11 gap-1.5">
           {uniqueTemplates.map((template, index) => (
             <QuickTemplateButton
               key={template.id}
