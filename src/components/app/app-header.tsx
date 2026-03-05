@@ -27,7 +27,7 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-end px-4">
+      <div className="container mx-auto flex h-12 items-center justify-end px-4">
         <div className="flex flex-1 items-center justify-end space-x-1 sm:space-x-2">
           <div className="flex items-center space-x-1">
             <Dialog>

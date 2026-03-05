@@ -40,31 +40,29 @@ body {
   }
 
   .dark {
-    /* Base oscura con estética Azul Claro Vibrante Original */
-    --background: 200 26% 12%;
-    /* Fondo profundo */
+    /* Base oscura personalizada con #223242 (HSL 210 32% 20%) */
+    --background: 210 32% 20%;
+    /* #223242 */
     --foreground: 210 40% 98%;
     /* Blanco puro */
-    --card: 200 26% 18%;
-    /* #23343c base */
+    --card: 210 32% 25%;
+    /* Ligeramente más claro para elevación */
     --card-foreground: 210 40% 98%;
-    --popover: 200 26% 16%;
+    --popover: 210 32% 22%;
     --popover-foreground: 210 40% 98%;
     --primary: 199 89% 48%;
-    /* El azul claro vibrante - Elegante y nítido */
+    /* Azul claro vibrante para contraste */
     --primary-foreground: 210 40% 98%;
-    --secondary: 200 26% 25%;
+    --secondary: 210 32% 30%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 200 20% 20%;
+    --muted: 210 32% 28%;
     --muted-foreground: 210 20% 75%;
-    /* Gris claro para textos secundarios */
     --accent: 199 89% 48%;
-    /* Acento azul claro */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
-    --border: 200 20% 28%;
-    --input: 200 20% 28%;
+    --border: 210 32% 35%;
+    --input: 210 32% 35%;
     --ring: 199 89% 48%;
     --chart-1: 199 89% 48%;
     --chart-2: 160 60% 50%;
