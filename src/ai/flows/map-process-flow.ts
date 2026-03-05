@@ -1,53 +1,27 @@
 'use server';
 
 /**
- * @fileOverview This file defines a Genkit flow to map unstructured text to a structured interactive decision tree.
- *
- * - mapProcess - A function that handles the process mapping.
- * - MapProcessInput - The input type for the mapProcess function.
- * - MapProcessOutput - The return type for the mapProcess function.
+ * @fileOverview Flow to map unstructured text to a structured interactive decision tree using Mistral AI.
  */
 
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { callMistralAI } from '@/ai/genkit';
 
-const MapProcessInputSchema = z.object({
-  processDescription: z.string().describe('El texto crudo o desordenado que describe un proceso.'),
-  existingProcesses: z.array(z.object({
-    title: z.string(),
-    tag: z.string(),
-    description: z.string(),
-  })).optional().describe('Lista de procesos existentes para aprender el formato.'),
-});
-export type MapProcessInput = z.infer<typeof MapProcessInputSchema>;
-
-const MapProcessOutputSchema = z.object({
-  title: z.string().describe('Un título corto y profesional.'),
-  tag: z.string().describe('Una etiqueta de una sola palabra.'),
-  description: z.string().describe('El árbol de decisión estructurado en formato JSON string.'),
-});
-export type MapProcessOutput = z.infer<typeof MapProcessOutputSchema>;
-
-export async function mapProcess(
-  input: MapProcessInput
-): Promise<{ success: boolean; data?: MapProcessOutput, error?: string }> {
-  try {
-    const output = await mapProcessFlow(input);
-    return { success: true, data: output };
-  } catch (error: any) {
-    console.error('Error in mapProcess flow', error);
-    return { success: false, error: error.message || 'Error al mapear el proceso.' };
-  }
+export interface MapProcessInput {
+  processDescription: string;
+  existingProcesses?: { title: string; tag: string; description: string }[];
 }
 
-const prompt = ai.definePrompt({
-  name: 'mapProcessPrompt',
-  input: { schema: MapProcessInputSchema },
-  output: { schema: MapProcessOutputSchema },
-  prompt: `Eres un Analista de Procesos Senior. Tu objetivo es convertir texto desordenado en un PROTOCOLO INTERACTIVO (árbol de decisión).
+export interface MapProcessOutput {
+  title: string;
+  tag: string;
+  description: string;
+}
+
+const SYSTEM_PROMPT = `Eres un Analista de Procesos Senior. Tu objetivo es convertir texto desordenado en un PROTOCOLO INTERACTIVO (árbol de decisión).
 
 **Instrucciones del Formato de Salida:**
-Debes generar un objeto JSON en el campo 'description' que represente un árbol de decisión. El nodo inicial SIEMPRE debe llamarse "start".
+Debes generar un objeto JSON con los campos: "title" (string), "tag" (string), y "description" (string con JSON dentro).
+El campo 'description' debe contener un árbol de decisión como JSON string. El nodo inicial SIEMPRE debe llamarse "start".
 
 Estructura de los nodos:
 1. 'question': Requiere 'title', 'hint' (opcional), y ya sea ('yes' y 'no' apuntando a otros IDs de nodos) o una lista de 'options' (cada una con 'label', 'icon' y 'next').
@@ -62,20 +36,18 @@ Ejemplo de JSON para 'description':
   "fin_ok": { "type": "end", "variant": "ok", "icon": "✅", "title": "Listo", "message": "Proceso completado." }
 }
 
-Convierte el siguiente texto en este formato estructurado:
-{{{processDescription}}}
+Responde SOLO con un JSON válido con los campos: title, tag, description (string con el JSON del árbol).`;
 
-Devuelve el JSON como una cadena de texto (string) pura dentro del campo 'description'. NO incluyas introducciones, ni bloques de código markdown, ni texto explicativo antes o después del JSON. Solo el objeto JSON.`,
-});
+export async function mapProcess(
+  input: MapProcessInput
+): Promise<{ success: boolean; data?: MapProcessOutput; error?: string }> {
+  try {
+    const userPrompt = `Convierte el siguiente texto en un protocolo estructurado:\n\n${input.processDescription}`;
 
-const mapProcessFlow = ai.defineFlow(
-  {
-    name: 'mapProcessFlow',
-    inputSchema: MapProcessInputSchema,
-    outputSchema: MapProcessOutputSchema,
-  },
-  async input => {
-    const { output } = await prompt(input);
-    return output!;
+    const result = await callMistralAI<MapProcessOutput>(SYSTEM_PROMPT, userPrompt);
+    return { success: true, data: result };
+  } catch (error: any) {
+    console.error('Error in mapProcess flow', error);
+    return { success: false, error: error.message || 'Error al mapear el proceso.' };
   }
-);
+}

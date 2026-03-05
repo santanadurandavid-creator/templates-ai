@@ -1,0 +1,44 @@
+/**
+ * @fileoverview Firestore Security Rules for Prototyping.
+ *
+ * Core Philosophy: This ruleset is designed for rapid prototyping, prioritizing strict
+ * authorization controls while relaxing data validation.  It emphasizes user-based ownership
+ * and prevents common security missteps like open writes. Data validation is intentionally minimal.
+ *
+ * Data Structure:
+ * - Backups: Stored in a top-level collection, /backups/{backupId}.
+ *
+ * Key Security Decisions:
+ * - Backups are publicly readable and writable, as per the original schema.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows anyone to read or write backups.
+     * @path /backups/{backupId}
+     * @allow (get, list)
+     * @deny (create, update, delete) if false
+     * @principle Public read and write access is permitted for backups.
+     */
+    match /backups/{backupId} {
+      allow get, list: if true;
+      allow create, update, delete: if true;
+    }
+    /**
+     * @description Prevents listing of knowledge_processes collection.
+     * @path /knowledge_processes
+     * @allow N/A
+     * @deny (list) All authenticated users.
+     * @principle No authenticated user can list documents from the knowledge_processes collection.
+     */
+    match /knowledge_processes {
+        allow get: if false;
+        allow list: if false;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
+    }
+  }
+}

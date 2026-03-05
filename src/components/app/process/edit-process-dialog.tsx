@@ -143,7 +143,7 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                                 <FormItem className="flex flex-col">
                                     <FormLabel>Etiqueta (Tag)</FormLabel>
                                     <Popover open={isTagPopoverOpen} onOpenChange={setTagPopoverOpen}>
-                                        <PopoverTrigger asChild>
+                                        <PopoverTrigger {...({ asChild: true } as any)}>
                                             <FormControl>
                                                 <Button
                                                     variant="outline"
@@ -222,7 +222,7 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                                             {isRegenerating ? (
                                                 <Loader2 className="h-3 w-3 animate-spin" />
                                             ) : (
-                                                <Sparkles className="h-3 w-3" />
+                                                <Sparkles className={"h-3 w-3" as any} />
                                             )}
                                             Regenerar flujo (IA)
                                         </Button>
@@ -242,7 +242,7 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                         <DialogFooter>
                             {process && (
                                 <AlertDialog>
-                                    <AlertDialogTrigger asChild>
+                                    <AlertDialogTrigger {...({ asChild: true } as any)}>
                                         <Button type="button" variant="destructive" className="mr-auto">
                                             <Trash2 className="mr-2 h-4 w-4" /> Eliminar
                                         </Button>
@@ -256,7 +256,7 @@ export function EditProcessDialog({ process, allProcesses, open, onOpenChange, o
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                            <AlertDialogAction onClick={() => onDelete(process.id)}>Eliminar</AlertDialogAction>
+                                            <AlertDialogAction onClick={() => onDelete(process.id)} {...({} as any)}>Eliminar</AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>

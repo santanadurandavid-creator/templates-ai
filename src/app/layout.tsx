@@ -1,4 +1,6 @@
-import type {Metadata} from 'next';
+/// <reference types="react" />
+import React from 'react';
+import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import BottomNav from '@/components/app/bottom-nav';

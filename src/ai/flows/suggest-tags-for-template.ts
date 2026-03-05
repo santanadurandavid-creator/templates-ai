@@ -1,62 +1,31 @@
 'use server';
 
 /**
- * @fileOverview This file defines a Genkit flow to suggest relevant tags and classify a security incident.
- *
- * - suggestTagsForTemplate - A function that handles the tag suggestion process.
- * - SuggestTagsForTemplateInput - The input type for the suggestTagsForTemplate function.
- * - SuggestTagsForTemplateOutput - The return type for the suggestTagsForTemplate function.
+ * @fileOverview Flow for suggesting tags and classifying incidents using Mistral AI.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { callMistralAI } from '@/ai/genkit';
 
-const SuggestTagsForTemplateInputSchema = z.object({
-  situation: z
-    .string()
-    .describe('The content of the template for which tags are to be suggested.'),
-  tagRules: z
-    .string()
-    .optional()
-    .describe('Reglas personalizadas sobre qué tags usar y cuándo.'),
-});
-export type SuggestTagsForTemplateInput = z.infer<
-  typeof SuggestTagsForTemplateInputSchema
->;
+export interface SuggestTagsForTemplateInput {
+  situation: string;
+  tagRules?: string;
+}
 
-const SuggestTagsForTemplateOutputSchema = z.object({
-  tag: z.string().describe('El tag más adecuado de la lista.'),
-  severity: z.enum(['VERDE', 'AMARILLO', 'ROJO']).describe('La gravedad del incidente.'),
-  justification: z.string().describe('Una justificación breve de la clasificación.'),
-});
-export type SuggestTagsForTemplateOutput = z.infer<
-  typeof SuggestTagsForTemplateOutputSchema
->;
+export interface SuggestTagsForTemplateOutput {
+  tag: string;
+  severity: 'VERDE' | 'AMARILLO' | 'ROJO';
+  justification: string;
+}
 
 export async function suggestTagsForTemplate(
   input: SuggestTagsForTemplateInput
-): Promise<{ success: boolean; data?: SuggestTagsForTemplateOutput, error?: string}> {
+): Promise<{ success: boolean; data?: SuggestTagsForTemplateOutput; error?: string }> {
   try {
-    const output = await suggestTagsForTemplateFlow(input);
-    return { success: true, data: output };
-  } catch (error: any) {
-    console.error('Error in suggestTagsForTemplate flow', error);
-    return { success: false, error: error.message || 'Error al sugerir tags.' };
-  }
-}
+    const systemPrompt = `Eres un experto en seguridad y soporte de transporte. Tu tarea es clasificar el incidente proporcionado.
 
-const prompt = ai.definePrompt({
-  name: 'suggestTagsPrompt',
-  input: { schema: SuggestTagsForTemplateInputSchema },
-  output: { schema: SuggestTagsForTemplateOutputSchema },
-  prompt: `Eres un experto en seguridad y soporte de transporte. Tu tarea es clasificar el incidente proporcionado en la 'situation'.
-
-{{#if tagRules}}
-**Reglas de Etiquetas Personalizadas (Prioridad Máxima):**
+${input.tagRules ? `**Reglas de Etiquetas Personalizadas (Prioridad Máxima):**
 Usa estas reglas para determinar el 'tag' y la 'severity':
-{{{tagRules}}}
-{{else}}
-**TAGS Estándar (Usar si no hay reglas):**
+${input.tagRules}` : `**TAGS Estándar:**
 - Accidentes de coche
 - Agresiones
 - Acoso sexual
@@ -70,37 +39,20 @@ Usa estas reglas para determinar el 'tag' y la 'severity':
 **Reglas de Gravedad Estándar:**
 - Verde: Sin riesgo inmediato/físico.
 - Amarillo: Riesgo potencial o daño menor.
-- Rojo: Peligro de vida o daño grave.
-{{/if}}
+- Rojo: Peligro de vida o daño grave.`}
 
 **Instrucciones:**
 1. Lee la situación.
-2. Basándote en las reglas (preferiblemente las personalizadas), elige el TAG más adecuado.
+2. Elige el TAG más adecuado.
 3. Determina la Gravedad (VERDE, AMARILLO, o ROJO).
 4. Justifica tu decisión brevemente en español.
 
-**Situación a analizar:**
-{{{situation}}}
-`,
-  config: {
-    safetySettings: [
-      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-    ]
-  }
-});
+Responde SOLO con un JSON válido con los campos: tag, severity, justification.`;
 
-
-const suggestTagsForTemplateFlow = ai.defineFlow(
-  {
-    name: 'suggestTagsForTemplateFlow',
-    inputSchema: SuggestTagsForTemplateInputSchema,
-    outputSchema: SuggestTagsForTemplateOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const result = await callMistralAI<SuggestTagsForTemplateOutput>(systemPrompt, input.situation);
+    return { success: true, data: result };
+  } catch (error: any) {
+    console.error('Error in suggestTagsForTemplate flow', error);
+    return { success: false, error: error.message || 'Error al sugerir tags.' };
   }
-);
+}

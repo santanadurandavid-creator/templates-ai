@@ -1,0 +1,99 @@
+﻿node.exe : WARN! Build not running on Vercel. System environment 
+variables will not be available.
+En C:\Users\DSD\AppData\Roaming\npm\vercel.ps1: 24 Carácter: 5
++     & "node$exe"  "$basedir/node_modules/vercel/dist/vc.js" 
+$args
++     
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARN! Build not...t 
+    be available.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Warning: Due to "engines": { "node": "20" } in your 
+`package.json` file, the Node.js Version defined in your Project 
+Settings ("24.x") will not apply, Node.js Version "20.x" will be 
+used instead. Learn More: https://vercel.link/node-version
+WARNING: You should not upload the `.next` directory.
+Installing dependencies...
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'nextn@0.1.0',
+npm warn EBADENGINE   required: { node: '20' },
+npm warn EBADENGINE   current: { node: 'v24.13.0', npm: '11.6.2' 
+}
+npm warn EBADENGINE }
+
+up to date in 4s
+
+234 packages are looking for funding
+  run `npm fund` for details
+Detected Next.js version: 15.0.7
+Running "npm run build"
+
+> nextn@0.1.0 build
+> next build
+
+   Ôû▓ Next.js 15.0.7
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Ô£ô (pwa) Compiling for server...
+ Ô£ô (pwa) Compiling for server...
+ Ô£ô (pwa) Compiling for client (static)...
+ Ôùï (pwa) Service worker: C:\Users\DSD\Downloads\INDRIVE TOOLS\public\sw.js
+ Ôùï (pwa)   URL: /sw.js
+ Ôùï (pwa)   Scope: /
+ Ô£ô Compiled successfully
+   Skipping validation of types
+   Linting ...
+ Ô¿» ESLint: Converting circular structure to JSON     --> 
+starting at object with constructor 'Object'     |     property 
+'configs' -> object with constructor 'Object'     |     property 
+'flat' -> object with constructor 'Object'     |     ...     |   
+  property 'plugins' -> object with constructor 'Object'     --- 
+property 'react' closes the circle Referenced from: 
+C:\Users\DSD\Downloads\INDRIVE TOOLS\.eslintrc.json
+   Collecting page data ...
+   Generating static pages (0/12) ...
+   Generating static pages (3/12) 
+   Generating static pages (6/12) 
+   Generating static pages (9/12) 
+ Ô£ô Generating static pages (12/12)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Ôöî Ôùï /                                    50.8 kB         246 kB
+Ôö£ Ôùï /_not-found                          895 B           103 kB
+Ôö£ Ôùï /dashboard                           20.2 kB         163 kB
+Ôö£ Ôùï /forms                               150 B           168 kB
+Ôö£ Ôùï /jiras                               1.1 kB          110 kB
+Ôö£ Ôùï /notes                               137 B           102 kB
+Ôö£ Ôùï /process                             5.05 kB         186 kB
+Ôö£ Ôùï /sheets                              150 B           168 kB
+Ôöö Ôùï /simulation                          137 B           102 kB
++ First Load JS shared by all            102 kB
+  Ôö£ chunks/455-4837d0ee5c82e952.js       47.6 kB
+  Ôö£ chunks/4bd1b696-93bdb6005776581f.js  52.5 kB
+  Ôöö other shared chunks (total)          1.86 kB
+
+
+Ôùï  (Static)  prerendered as static content
+
+Traced Next.js server files in: 1.655s
+Tracing entries due to missing build traces:
+[
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/_not-found/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/dashboard/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/jiras/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/forms/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/notes/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/process/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/sheets/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/simulation/page.js",
+  "C:/Users/DSD/Downloads/INDRIVE TOOLS/.next/server/app/favicon.ico/route.js"
+]: 3.642s
+Created all serverless functions in: 3.811s
+Collected static files (public/, static/, .next/static): 7.739ms
+Error: EPERM: operation not permitted, symlink '_not-found.func' 
+-> 'C:\Users\DSD\Downloads\INDRIVE 
+TOOLS\.vercel\output\functions\_not-found.rsc.func'

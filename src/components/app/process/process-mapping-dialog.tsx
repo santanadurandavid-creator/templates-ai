@@ -44,7 +44,7 @@ export function ProcessMappingDialog({
     }
 
     setIsLoading(true);
-    const { toastId } = toast({ title: 'Analizando y estructurando con IA...' });
+    const { id: toastId, update } = toast({ title: 'Analizando y estructurando con IA...' });
 
     try {
       const result = await mapProcess({
@@ -53,18 +53,18 @@ export function ProcessMappingDialog({
       });
 
       if (result.success && result.data) {
-        toast({ id: toastId, title: '¡Proceso Estructurado!', description: 'Revisa y guarda el nuevo proceso.' });
+        update({ id: toastId, title: '¡Proceso Estructurado!', description: 'Revisa y guarda el nuevo proceso.' });
         onProcessMapped(result.data);
       } else {
         throw new Error(result.error || 'No se pudo procesar el texto.');
       }
     } catch (error: any) {
-      toast({
+      update({
         id: toastId,
-        variant: 'destructive',
         title: 'Error de IA',
         description: error.message,
-      });
+        variant: 'destructive',
+      } as any);
     } finally {
       setIsLoading(false);
     }
@@ -80,9 +80,9 @@ export function ProcessMappingDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className={"sm:max-w-2xl" as any}>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className={"flex items-center gap-2" as any}>
             <Sparkles className="text-amber-500" />
             Mapeo de Proceso Inteligente
           </DialogTitle>
@@ -90,7 +90,7 @@ export function ProcessMappingDialog({
             Pega aquí tus notas desordenadas, un correo, o una transcripción. La IA lo convertirá en un proceso estructurado.
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
+        <div className={"py-4" as any}>
           <Textarea
             placeholder="Pega aquí tus notas desordenadas, un correo o instrucciones rápidas..."
             className="min-h-[250px] text-base"

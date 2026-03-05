@@ -1,13 +1,28 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
+import withPWA from '@ducanh2912/next-pwa';
+
+const pwa = withPWA({
+  dest: 'public',
+  register: true,
+  disable: process.env.NODE_ENV === 'development',
+  cacheOnFrontEndNav: false,
+  workboxOptions: {
+    skipWaiting: true,
+    clientsClaim: true,
+  },
+});
 
 const nextConfig: NextConfig = {
   /* config options here */
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+
   images: {
     remotePatterns: [
       {
@@ -32,4 +47,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default pwa(nextConfig);

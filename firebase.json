@@ -1,0 +1,48 @@
+{
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "apphosting": [
+    {
+      "backendId": "studio",
+      "rootDir": "./",
+      "ignore": [
+        "node_modules",
+        ".next"
+      ]
+    },
+    {
+      "backendId": "studio",
+      "rootDir": "n",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
+      ]
+    },
+    {
+      "backendId": "studio",
+      "rootDir": "y",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
+      ]
+    }
+  ]
+}

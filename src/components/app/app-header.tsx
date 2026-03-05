@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Search, UserCheck, Upload, Download, Plus, Settings } from 'lucide-react';
+import { Sparkles, Search, UserCheck, Upload, Download, Plus, Edit3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AITemplateModal } from './ai-template-modal';
 import { ImportExport } from './import-export';
@@ -41,36 +41,37 @@ export function AppHeader() {
               </DialogContent>
             </Dialog>
             <Button variant="ghost" size="sm" onClick={() => setFollowUpModalOpen(true)} className="px-2 sm:px-3">
-               <UserCheck className="h-4 w-4 sm:mr-2" />
-               <span className="hidden sm:inline">Seguimientos</span>
+              <UserCheck className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Seguimientos</span>
             </Button>
             <ImportExport />
-             <Button variant="outline" size="sm" onClick={handleAddQuickTemplate} className="px-2 sm:px-3">
+            <Button variant="outline" size="sm" onClick={handleAddQuickTemplate} className="px-2 sm:px-3">
               <Plus className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Plantilla Rápida</span>
             </Button>
           </div>
-          
+
           <AITemplateModal open={isAiModalOpen} onOpenChange={setAiModalOpen}>
-             <Button size="sm">
-                <Sparkles className="mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">Generador IA</span>
-                <span className="inline sm:hidden">IA</span>
+            <Button size="sm">
+              <Sparkles className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Generador IA</span>
+              <span className="inline sm:hidden">IA</span>
             </Button>
           </AITemplateModal>
-          
-          <Button 
-            variant="ghost" 
-            size="icon" 
+
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={toggleQuickTemplateEditMode}
-            className={cn('transition-colors', isQuickTemplateEditMode && 'bg-accent text-accent-foreground')}
+            className={cn('h-9 w-9 transition-colors', isQuickTemplateEditMode && 'bg-accent text-accent-foreground')}
+            title="Modo Edición"
           >
-            <Settings className="h-5 w-5" />
+            <Edit3 className="h-5 w-5" />
           </Button>
 
         </div>
       </div>
-      
+
       <FollowUpDialog open={isFollowUpModalOpen} onOpenChange={setFollowUpModalOpen} />
     </header>
   );
