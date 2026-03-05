@@ -40,34 +40,33 @@ body {
   }
 
   .dark {
-    /* Base oscura con estética Café Arena y Gris Cálido */
+    /* Base oscura con estética Azul Claro Vibrante Original */
     --background: 200 26% 12%;
     /* Fondo profundo */
-    --foreground: 30 15% 98%;
-    /* Blanco cálido */
+    --foreground: 210 40% 98%;
+    /* Blanco puro */
     --card: 200 26% 18%;
-    /* #23343c del usuario */
-    --card-foreground: 30 15% 98%;
+    /* #23343c base */
+    --card-foreground: 210 40% 98%;
     --popover: 200 26% 16%;
-    --popover-foreground: 30 15% 98%;
-    --primary: 35 45% 72%;
-    /* Café Arena claro (Warm Sand) - Brillante y elegante */
-    --primary-foreground: 200 26% 12%;
-    --secondary: 40 10% 25%;
-    /* Gris cálido oscuro */
-    --secondary-foreground: 35 45% 95%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    /* El azul claro vibrante - Elegante y nítido */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 200 26% 25%;
+    --secondary-foreground: 210 40% 98%;
     --muted: 200 20% 20%;
-    --muted-foreground: 35 15% 80%;
-    /* Texto secundario en Gris Arena claro para máxima legibilidad */
-    --accent: 35 45% 72%;
-    /* Acento Café Arena */
-    --accent-foreground: 200 26% 12%;
+    --muted-foreground: 210 20% 75%;
+    /* Gris claro para textos secundarios */
+    --accent: 199 89% 48%;
+    /* Acento azul claro */
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
     --border: 200 20% 28%;
     --input: 200 20% 28%;
-    --ring: 35 45% 72%;
-    --chart-1: 35 45% 72%;
+    --ring: 199 89% 48%;
+    --chart-1: 199 89% 48%;
     --chart-2: 160 60% 50%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 65%;
