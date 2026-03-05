@@ -37,10 +37,9 @@ export function TopUsedTemplates({ templates, isLoading, onCopy, onHide }: TopUs
                             <CarouselItem key={index} className="basis-[23.5%] sm:basis-1/2 lg:basis-1/3 pl-1">
                                 <div>
                                     <Card>
-                                        <CardContent className="flex flex-col h-28 items-start justify-between p-3">
+                                        <CardContent className="flex flex-col h-[70px] items-start justify-center p-2">
                                             <Skeleton className="h-3 w-16 rounded-full" />
                                             <Skeleton className="h-4 w-4/5 mt-1" />
-                                            <Skeleton className="h-4 w-24 mt-2" />
                                         </CardContent>
                                     </Card>
                                 </div>
@@ -73,15 +72,15 @@ export function TopUsedTemplates({ templates, isLoading, onCopy, onHide }: TopUs
                                     className="hover:shadow-md transition-shadow cursor-pointer h-full border-accent/10"
                                     onClick={() => onCopy(template.content, template.title, template.id)}
                                 >
-                                    <CardContent className="flex flex-col h-28 items-start justify-between p-3 select-none">
-                                        <Badge variant="secondary" className="text-[9px] h-4 px-1">{template.category}</Badge>
-                                        <div className="flex-1 mt-1 w-full overflow-hidden">
-                                            <p className="font-bold text-xs truncate leading-tight" title={template.title}>{template.title}</p>
-                                            <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5 leading-tight">
-                                                {template.content}
-                                            </p>
+                                    <CardContent className="flex flex-col h-[70px] items-start justify-center p-2 select-none overflow-hidden">
+                                        <div className="flex items-center justify-between w-full mb-0.5">
+                                            <Badge variant="secondary" className="text-[8px] h-3 px-1 leading-none">{template.category}</Badge>
+                                            <span className="text-[8px] text-muted-foreground/60">{template.usageCount}u</span>
                                         </div>
-                                        <div className="text-[9px] text-muted-foreground/70 font-medium">{template.usageCount} usos</div>
+                                        <p className="font-bold text-[11px] truncate w-full leading-tight" title={template.title}>{template.title}</p>
+                                        <p className="text-[9px] text-muted-foreground line-clamp-1 mt-0.5 leading-none opacity-80">
+                                            {template.content}
+                                        </p>
                                     </CardContent>
                                 </Card>
                             </div>
