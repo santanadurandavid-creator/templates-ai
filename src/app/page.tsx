@@ -257,19 +257,16 @@ export default function TemplatesPage() {
                   <div className="flex items-center gap-1.5 shrink-0 pl-1 border-l ml-1 border-accent/10 overflow-hidden">
                     <div className={cn(
                       "flex items-center gap-1.5 transition-all duration-300 ease-in-out",
-                      (isQuickActionsExpanded || isQuickEditMode) ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 w-0"
+                      (isQuickActionsExpanded || isQuickEditMode) ? "max-w-[150px] opacity-100" : "max-w-0 opacity-0"
                     )}>
                       <Button
-                        variant={isQuickEditMode ? "default" : "ghost"}
+                        variant="outline"
                         size="icon"
-                        className={cn(
-                          "h-8 w-8 transition-all shrink-0",
-                          isQuickEditMode ? "animate-pulse shadow-md" : "text-muted-foreground hover:text-accent hover:bg-accent/10"
-                        )}
-                        onClick={() => setIsQuickEditMode(!isQuickEditMode)}
-                        title={isQuickEditMode ? "Finalizar Edición" : "Editar Cuadrícula"}
+                        className="h-8 w-8 border-accent/20 text-accent hover:bg-accent/10 shrink-0"
+                        onClick={() => handleOpenQuickTemplateDialog(null)}
+                        title="Añadir Nota Rápida"
                       >
-                        {isQuickEditMode ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+                        <Plus className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -281,13 +278,16 @@ export default function TemplatesPage() {
                         <Settings className="h-4 w-4" />
                       </Button>
                       <Button
-                        variant="outline"
+                        variant={isQuickEditMode ? "default" : "ghost"}
                         size="icon"
-                        className="h-8 w-8 border-accent/20 text-accent hover:bg-accent/10 shrink-0"
-                        onClick={() => handleOpenQuickTemplateDialog(null)}
-                        title="Añadir Nota Rápida"
+                        className={cn(
+                          "h-8 w-8 transition-all shrink-0",
+                          isQuickEditMode ? "animate-pulse shadow-md" : "text-muted-foreground hover:text-accent hover:bg-accent/10"
+                        )}
+                        onClick={() => setIsQuickEditMode(!isQuickEditMode)}
+                        title={isQuickEditMode ? "Finalizar Edición" : "Editar Cuadrícula"}
                       >
-                        <Plus className="h-4 w-4" />
+                        {isQuickEditMode ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
                       </Button>
                     </div>
 
