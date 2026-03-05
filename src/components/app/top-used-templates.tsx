@@ -34,8 +34,8 @@ export function TopUsedTemplates({ templates, isLoading, onCopy, onHide }: TopUs
                 <Carousel opts={{ align: "start", loop: false }}>
                     <CarouselContent>
                         {Array.from({ length: 5 }).map((_, index) => (
-                            <CarouselItem key={index} className="basis-[23%] sm:basis-1/2 lg:basis-1/3">
-                                <div className="p-1">
+                            <CarouselItem key={index} className="basis-[23.5%] sm:basis-1/2 lg:basis-1/3 pl-1">
+                                <div>
                                     <Card>
                                         <CardContent className="flex flex-col h-28 items-start justify-between p-3">
                                             <Skeleton className="h-3 w-16 rounded-full" />
@@ -71,10 +71,10 @@ export function TopUsedTemplates({ templates, isLoading, onCopy, onHide }: TopUs
                 }}
                 className="w-full"
             >
-                <CarouselContent>
+                <CarouselContent className="-ml-1">
                     {topTemplates.map((template) => (
-                        <CarouselItem key={template.id} className="basis-[23%] sm:basis-1/2 lg:basis-1/3">
-                            <div className="p-1">
+                        <CarouselItem key={template.id} className="basis-[23.5%] sm:basis-1/2 lg:basis-1/3 pl-1">
+                            <div>
                                 <Card
                                     className="hover:shadow-md transition-shadow cursor-pointer h-full border-accent/10"
                                     onClick={() => onCopy(template.content, template.title, template.id)}

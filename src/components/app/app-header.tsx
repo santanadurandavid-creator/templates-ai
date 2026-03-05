@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, Search, UserCheck, Upload, Download, Plus, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AITemplateModal } from './ai-template-modal';
@@ -14,7 +14,12 @@ import { FollowUpDialog } from './follow-up-dialog';
 export function AppHeader() {
   const [isAiModalOpen, setAiModalOpen] = useState(false);
   const [isFollowUpModalOpen, setFollowUpModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { isDarkMode, toggleTheme } = useAppSettings();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleAddQuickTemplate = () => {
     eventBus.dispatch('open-quick-template-dialog');
@@ -64,12 +69,16 @@ export function AppHeader() {
             size="icon"
             onClick={toggleTheme}
             className="h-9 w-9 transition-colors hover:bg-accent/10 hover:text-accent"
-            title={isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            title={mounted ? (isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro') : 'Cargando tema...'}
           >
-            {isDarkMode ? (
-              <Sun className="h-5 w-5 text-yellow-400" />
+            {mounted ? (
+              isDarkMode ? (
+                <Sun className="h-5 w-5 text-yellow-400" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )
             ) : (
-              <Moon className="h-5 w-5" />
+              <div className="h-5 w-5" /> // Placeholder to avoid hydration mismatch
             )}
           </Button>
 
