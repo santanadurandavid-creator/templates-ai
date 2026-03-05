@@ -16,10 +16,10 @@ import { Input } from '../ui/input';
 import { useFollowUpProcesses } from '@/hooks/use-follow-up-processes';
 
 const safeUUID = () => {
-    if (typeof window !== 'undefined' && window.crypto) {
-        return window.crypto.randomUUID();
-    }
-    return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  if (typeof window !== 'undefined' && window.crypto) {
+    return window.crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 };
 
 
@@ -37,8 +37,14 @@ export function ImportExport() {
 
   const handleExport = () => {
     try {
-      const appData: AppData = { 
-        templates, 
+      // Exportar templates ya ordenados por su campo `order` para preservar el acomodo
+      const orderedTemplates = [...templates].sort((a, b) => {
+        if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }).map((t, idx) => ({ ...t, order: t.order ?? idx }));
+
+      const appData: AppData = {
+        templates: orderedTemplates,
         links,
         knowledgeBase,
         aiHistory,
@@ -81,7 +87,7 @@ export function ImportExport() {
       try {
         const text = e.target?.result;
         if (typeof text !== 'string') throw new Error('Invalid file content');
-        
+
         const importedData = JSON.parse(text);
         applyBackup(importedData as AppData);
 
@@ -95,9 +101,9 @@ export function ImportExport() {
       }
     };
     reader.readAsText(file);
-    
-    if(fileInputRef.current) {
-        fileInputRef.current.value = '';
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -107,7 +113,7 @@ export function ImportExport() {
 
     // Process templates from `templates` array
     if (data.templates && Array.isArray(data.templates)) {
-      const importedTemplates: Template[] = data.templates.map((t: any) => ({
+      const importedTemplates: Template[] = data.templates.map((t: any, idx: number) => ({
         id: t.id || safeUUID(),
         title: t.title || 'Sin Título',
         content: t.content || '',
@@ -117,34 +123,42 @@ export function ImportExport() {
         isQuick: t.isQuick || false,
         createdAt: t.createdAt || now,
         color: t.color,
+        order: t.order !== undefined ? t.order : idx, // Preservar el orden exacto del JSON exportado
       }));
       finalTemplates = finalTemplates.concat(importedTemplates);
     }
-    
+
     // Process quick templates from the legacy `quickTemplates` array
     if ((data as any).quickTemplates && Array.isArray((data as any).quickTemplates)) {
-        const importedQuickTemplates: Template[] = ((data as any).quickTemplates).map((t: any) => ({
-            id: t.id || safeUUID(),
-            title: t.title || 'Sin Título',
-            content: t.content || '',
-            category: 'Quick',
-            tags: t.tags || [],
-            usageCount: t.usageCount || 0,
-            isQuick: true,
-            createdAt: t.createdAt || now,
-            color: t.color,
-        }));
-        finalTemplates = finalTemplates.concat(importedQuickTemplates);
+      const importedQuickTemplates: Template[] = ((data as any).quickTemplates).map((t: any, idx: number) => ({
+        id: t.id || safeUUID(),
+        title: t.title || 'Sin Título',
+        content: t.content || '',
+        category: 'Quick',
+        tags: t.tags || [],
+        usageCount: t.usageCount || 0,
+        isQuick: true,
+        createdAt: t.createdAt || now,
+        color: t.color,
+        order: t.order !== undefined ? t.order : (finalTemplates.length + idx), // Preservar orden
+      }));
+      finalTemplates = finalTemplates.concat(importedQuickTemplates);
     }
-    
+
+    // Ordenar por el campo `order` para que el acomodo sea idéntico al momento de exportarse
+    finalTemplates.sort((a, b) => {
+      if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
     setTemplates(finalTemplates);
 
 
     if (data.links && Array.isArray(data.links)) {
-       const linksWithIds = data.links.map((l: LinkType) => ({ ...l, id: l.id?.toString() || safeUUID() }));
-       setLinks(linksWithIds);
+      const linksWithIds = data.links.map((l: LinkType) => ({ ...l, id: l.id?.toString() || safeUUID() }));
+      setLinks(linksWithIds);
     } else {
-       setLinks([]);
+      setLinks([]);
     }
 
     if (data.knowledgeBase && Array.isArray(data.knowledgeBase)) {
@@ -153,56 +167,56 @@ export function ImportExport() {
     } else {
       setKnowledgeBase([]);
     }
-    
+
     if (data.aiHistory && Array.isArray(data.aiHistory)) {
-        const historyWithIds = data.aiHistory.map((h: AITemplate) => ({ 
-          ...h, 
-          id: h.id?.toString() || safeUUID(),
-          createdAt: h.createdAt || now 
-        }));
-        setAiHistory(historyWithIds);
+      const historyWithIds = data.aiHistory.map((h: AITemplate) => ({
+        ...h,
+        id: h.id?.toString() || safeUUID(),
+        createdAt: h.createdAt || now
+      }));
+      setAiHistory(historyWithIds);
     } else {
-        setAiHistory([]);
+      setAiHistory([]);
     }
 
     if (data.rephraseHistory && Array.isArray(data.rephraseHistory)) {
-        const rephraseWithIds = data.rephraseHistory.map((r: RephrasedTemplate) => ({ 
-          ...r, 
-          id: r.id?.toString() || safeUUID(),
-          createdAt: r.createdAt || now 
-        }));
-        setRephraseHistory(rephraseWithIds);
+      const rephraseWithIds = data.rephraseHistory.map((r: RephrasedTemplate) => ({
+        ...r,
+        id: r.id?.toString() || safeUUID(),
+        createdAt: r.createdAt || now
+      }));
+      setRephraseHistory(rephraseWithIds);
     } else {
-        setRephraseHistory([]);
+      setRephraseHistory([]);
     }
 
     if (data.followUps && Array.isArray(data.followUps)) {
-        const followUpsWithIds = data.followUps.map((f: FollowUp) => ({ 
-          ...f, 
-          id: f.id?.toString() || safeUUID(),
-          createdAt: f.createdAt || now 
-        }));
-        setFollowUps(followUpsWithIds);
+      const followUpsWithIds = data.followUps.map((f: FollowUp) => ({
+        ...f,
+        id: f.id?.toString() || safeUUID(),
+        createdAt: f.createdAt || now
+      }));
+      setFollowUps(followUpsWithIds);
     } else {
-        setFollowUps([]);
+      setFollowUps([]);
     }
 
     if (data.followUpProcesses && Array.isArray(data.followUpProcesses)) {
-        const processesWithIds = data.followUpProcesses.map((p: FollowUpProcess) => ({ ...p, id: p.id?.toString() || safeUUID() }));
-        setFollowUpProcesses(processesWithIds);
+      const processesWithIds = data.followUpProcesses.map((p: FollowUpProcess) => ({ ...p, id: p.id?.toString() || safeUUID() }));
+      setFollowUpProcesses(processesWithIds);
     } else {
-        setFollowUpProcesses([]);
+      setFollowUpProcesses([]);
     }
 
     if (data.tagSuggestions && Array.isArray(data.tagSuggestions)) {
-        const suggestionsWithIds = data.tagSuggestions.map((s: TagSuggestion) => ({ 
-          ...s, 
-          id: s.id?.toString() || safeUUID(),
-          createdAt: s.createdAt || now 
-        }));
-        setTagSuggestions(suggestionsWithIds);
+      const suggestionsWithIds = data.tagSuggestions.map((s: TagSuggestion) => ({
+        ...s,
+        id: s.id?.toString() || safeUUID(),
+        createdAt: s.createdAt || now
+      }));
+      setTagSuggestions(suggestionsWithIds);
     } else {
-        setTagSuggestions([]);
+      setTagSuggestions([]);
     }
 
     toast({
@@ -210,21 +224,21 @@ export function ImportExport() {
       description: 'Tus datos han sido restaurados desde el archivo.',
     });
   };
-  
+
   return (
     <>
-      <Input 
-        type="file" 
-        id="import-file" 
+      <Input
+        type="file"
+        id="import-file"
         ref={fileInputRef}
-        className="hidden" 
-        accept=".json" 
-        onChange={handleFileChange} 
+        className="hidden"
+        accept=".json"
+        onChange={handleFileChange}
       />
       <Button variant="outline" size="sm" asChild className="px-2 sm:px-3">
         <label htmlFor="import-file" className="cursor-pointer">
-            <Upload className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Importar</span>
+          <Upload className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline">Importar</span>
         </label>
       </Button>
       <Button variant="outline" size="sm" onClick={handleExport} className="px-2 sm:px-3">
