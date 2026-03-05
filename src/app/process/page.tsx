@@ -191,58 +191,58 @@ export default function ProcessPage() {
 
                 {isLoading ? (
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-                        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-[250px] w-full" />)}
+                        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-[215px] w-full" />)}
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
                         {filteredKnowledgeBase.map(process => (
                             <Card
                                 key={process.id}
-                                className="group hover:shadow-lg transition-all flex flex-col justify-between relative h-[280px] border-accent/10"
+                                className="group hover:shadow-lg transition-all flex flex-col justify-between relative h-[215px] border-accent/10"
                             >
-                                <CardHeader className="pb-2">
+                                <CardHeader className="p-3 pb-1">
                                     <div className="flex justify-between items-start gap-2">
-                                        <CardTitle className="text-lg leading-tight line-clamp-2">{process.title}</CardTitle>
+                                        <CardTitle className="text-sm sm:text-base leading-tight line-clamp-2">{process.title}</CardTitle>
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenEditDialog(process);
                                             }}
                                         >
-                                            <PenLine className="h-4 w-4 text-slate-500" />
+                                            <PenLine className="h-3.5 w-3.5 text-slate-500" />
                                         </Button>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="flex-grow overflow-hidden">
-                                    <p className="text-sm text-muted-foreground line-clamp-3">
+                                <CardContent className="px-3 pb-1 overflow-hidden">
+                                    <p className="text-[11px] sm:text-xs text-muted-foreground line-clamp-2">
                                         {process.description.trim().startsWith('{')
-                                            ? "Este proceso tiene un flujo interactivo estructurado."
+                                            ? "Flujo interactivo estructurado."
                                             : process.description
                                         }
                                     </p>
                                 </CardContent>
-                                <CardFooter className="pt-2 flex flex-col gap-3">
+                                <CardFooter className="p-3 pt-1 flex flex-col gap-2">
                                     <div className="flex justify-between items-center w-full">
-                                        <Badge variant="secondary" className="bg-slate-100 text-slate-700">
+                                        <Badge variant="secondary" className="bg-slate-100 text-slate-700 text-[9px] h-4 py-0">
                                             {process.tag}
                                         </Badge>
                                     </div>
                                     <Button
-                                        className="w-full gap-2 font-semibold"
+                                        className="w-full h-8 gap-2 text-xs font-semibold"
                                         onClick={() => handleViewFlow(process)}
                                         disabled={isGeneratingFlowId === process.id}
                                     >
                                         {isGeneratingFlowId === process.id ? (
                                             <>
-                                                <Loader2 className="h-4 w-4 animate-spin" />
-                                                Generando...
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                                <span>IA...</span>
                                             </>
                                         ) : (
                                             <>
-                                                <PlayCircle className="h-4 w-4" />
+                                                <PlayCircle className="h-3 w-3" />
                                                 Ver Flujo
                                             </>
                                         )}

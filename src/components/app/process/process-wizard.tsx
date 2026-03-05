@@ -66,19 +66,19 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
 
   const getBadgeStyles = () => {
     switch (currentNode.type) {
-      case 'question': return 'bg-[#e8f0fe] text-[#1967d2]';
-      case 'process': return 'bg-[#fef9e0] text-[#b06000]';
-      case 'end': return currentNode.variant === 'ok' ? 'bg-[#e6f4ea] text-[#1e8e3e]' : 'bg-[#fce8e6] text-[#c5221f]';
-      default: return 'bg-slate-100 text-slate-600';
+      case 'question': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300';
+      case 'process': return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300';
+      case 'end': return currentNode.variant === 'ok' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300';
+      default: return 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
     }
   };
 
   const getBorderColor = () => {
     switch (currentNode.type) {
-      case 'question': return 'bg-[#1a73e8]';
-      case 'process': return 'bg-[#f9ab00]';
-      case 'end': return currentNode.variant === 'ok' ? 'bg-[#1e8e3e]' : 'bg-[#d93025]';
-      default: return 'bg-slate-300';
+      case 'question': return 'bg-blue-500';
+      case 'process': return 'bg-amber-500';
+      case 'end': return currentNode.variant === 'ok' ? 'bg-emerald-500' : 'bg-rose-500';
+      default: return 'bg-slate-300 dark:bg-slate-700';
     }
   };
 
@@ -92,11 +92,11 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#f5f6fa] font-sans">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 font-sans">
       <div className="flex-1 flex items-center justify-center p-4 sm:p-10 mb-20 overflow-hidden">
         <Card
           className={cn(
-            "w-full max-w-[520px] p-10 shadow-2xl rounded-2xl border border-[#e8eaed] bg-white relative overflow-hidden transition-all duration-300",
+            "w-full max-w-[520px] p-6 sm:p-10 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 relative overflow-hidden transition-all duration-300",
             direction === 'in' && "animate-in slide-in-from-right-12 fade-in duration-300",
             direction === 'back' && "animate-in slide-in-from-left-12 fade-in duration-300",
             direction === 'out' && "animate-out slide-out-to-left-12 fade-out duration-200",
@@ -121,13 +121,13 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
           )}
 
           {/* Title */}
-          <h2 className="text-[22px] font-bold text-[#202124] leading-[1.4] mb-2">
+          <h2 className="text-xl sm:text-[22px] font-bold text-foreground leading-[1.4] mb-2">
             {currentNode.title}
           </h2>
 
           {/* Hint / Description */}
           {currentNode.hint && (
-            <p className="text-[13px] text-[#80868b] leading-[1.5] mb-8">
+            <p className="text-[13px] text-muted-foreground leading-[1.5] mb-8">
               {currentNode.hint}
             </p>
           )}
@@ -136,11 +136,11 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
           {currentNode.type === 'process' && (
             <div className="flex flex-col gap-3 mb-7">
               {currentNode.steps?.map((step, i) => (
-                <div key={i} className="flex items-start gap-3 p-3.5 bg-[#f8f9fa] rounded-lg">
-                  <div className="w-[22px] h-[22px] bg-[#f9ab00] text-white flex items-center justify-center text-[11px] font-bold rounded-full shrink-0 mt-[1px]">
+                <div key={i} className="flex items-start gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                  <div className="w-[22px] h-[22px] bg-amber-500 text-white flex items-center justify-center text-[11px] font-bold rounded-full shrink-0 mt-[1px]">
                     {i + 1}
                   </div>
-                  <p className="text-[13px] text-[#3c4043] leading-[1.5]">{step}</p>
+                  <p className="text-[13px] text-slate-700 dark:text-slate-300 leading-[1.5]">{step}</p>
                 </div>
               ))}
             </div>
@@ -148,7 +148,7 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
 
           {/* End Message */}
           {currentNode.type === 'end' && (
-            <div className="text-[14px] text-[#5f6368] leading-[1.6]">
+            <div className="text-[14px] text-slate-600 dark:text-slate-400 leading-[1.6]">
               {currentNode.message}
             </div>
           )}
@@ -160,32 +160,32 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
                 {currentNode.yes && currentNode.no ? (
                   <>
                     <button
-                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#1e8e3e] hover:bg-[#f5fbf6] hover:translate-y-[-1px] group"
+                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[14px] font-medium text-slate-900 dark:text-slate-100 text-left flex items-center gap-3 relative transition-all hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/10 hover:translate-y-[-1px] group"
                       onClick={() => handleNext(currentNode.yes!)}
                     >
-                      <div className="w-[34px] h-[34px] rounded-lg bg-[#e6f4ea] flex items-center justify-center text-[16px]">✓</div>
+                      <div className="w-[34px] h-[34px] rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-[16px]">✓</div>
                       <span>Sí</span>
-                      <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#1e8e3e] group-hover:right-3 transition-all">›</span>
+                      <span className="absolute right-4 text-[18px] text-slate-300 dark:text-slate-700 group-hover:text-emerald-500 transition-all">›</span>
                     </button>
                     <button
-                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#d93025] hover:bg-[#fef7f7] hover:translate-y-[-1px] group"
+                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[14px] font-medium text-slate-900 dark:text-slate-100 text-left flex items-center gap-3 relative transition-all hover:border-rose-500 dark:hover:border-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 hover:translate-y-[-1px] group"
                       onClick={() => handleNext(currentNode.no!)}
                     >
-                      <div className="w-[34px] h-[34px] rounded-lg bg-[#fce8e6] flex items-center justify-center text-[16px]">✗</div>
+                      <div className="w-[34px] h-[34px] rounded-lg bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-[16px]">✗</div>
                       <span>No</span>
-                      <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#d93025] group-hover:right-3 transition-all">›</span>
+                      <span className="absolute right-4 text-[18px] text-slate-300 dark:text-slate-700 group-hover:text-rose-500 transition-all">›</span>
                     </button>
                   </>
                 ) : (
                   currentNode.options?.map((opt, i) => (
                     <button
                       key={i}
-                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#1a73e8] hover:bg-[#f8fbff] hover:translate-y-[-1px] group"
+                      className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[14px] font-medium text-slate-900 dark:text-slate-100 text-left flex items-center gap-3 relative transition-all hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 hover:translate-y-[-1px] group"
                       onClick={() => handleNext(opt.next)}
                     >
-                      <div className="w-[34px] h-[34px] rounded-lg bg-[#e8f0fe] flex items-center justify-center text-[16px]">{opt.icon}</div>
+                      <div className="w-[34px] h-[34px] rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-[16px]">{opt.icon}</div>
                       <span>{opt.label}</span>
-                      <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#1a73e8] group-hover:right-3 transition-all">›</span>
+                      <span className="absolute right-4 text-[18px] text-slate-300 dark:text-slate-700 group-hover:text-blue-500 transition-all">›</span>
                     </button>
                   ))
                 )}
@@ -194,12 +194,12 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
 
             {currentNode.type === 'process' && currentNode.next && (
               <button
-                className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-[#e8eaed] bg-white text-[14px] font-medium text-[#202124] text-left flex items-center gap-3 relative transition-all hover:border-[#1e8e3e] hover:bg-[#f5fbf6] hover:translate-y-[-1px] group"
+                className="w-full p-3.5 px-5 rounded-xl border-[1.5px] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[14px] font-medium text-slate-900 dark:text-slate-100 text-left flex items-center gap-3 relative transition-all hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/10 hover:translate-y-[-1px] group"
                 onClick={() => handleNext(currentNode.next!)}
               >
-                <div className="w-[34px] h-[34px] rounded-lg bg-[#e6f4ea] flex items-center justify-center text-[16px]">✓</div>
+                <div className="w-[34px] h-[34px] rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-[16px]">✓</div>
                 <span>Pasos completados — Continuar</span>
-                <span className="absolute right-4 text-[18px] text-[#dadce0] group-hover:text-[#1e8e3e] group-hover:right-3 transition-all">›</span>
+                <span className="absolute right-4 text-[18px] text-slate-300 dark:text-slate-700 group-hover:text-emerald-500 transition-all">›</span>
               </button>
             )}
           </div>
@@ -207,9 +207,9 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
       </div>
 
       {/* Bottom Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#e8eaed] p-3.5 px-4 sm:px-8 flex items-center gap-2 sm:gap-3 z-[100]">
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-3.5 px-4 sm:px-8 flex items-center gap-2 sm:gap-3 z-[100]">
         <button
-          className="flex items-center gap-1.5 p-2 px-3 sm:px-4 border-[1.5px] border-[#e8eaed] rounded-lg bg-white text-[12px] sm:text-[13px] font-medium text-[#5f6368] transition-all hover:border-[#bdc1c6] hover:text-[#202124] disabled:opacity-30 disabled:pointer-events-none shrink-0"
+          className="flex items-center gap-1.5 p-2 px-3 sm:px-4 border border-border rounded-lg bg-background text-[12px] sm:text-[13px] font-medium text-muted-foreground transition-all hover:border-slate-400 dark:hover:border-slate-600 hover:text-foreground disabled:opacity-30 disabled:pointer-events-none shrink-0"
           onClick={handleBack}
           disabled={history.length === 0 || isAnimating}
         >
@@ -217,7 +217,7 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
         </button>
 
         <button
-          className="flex items-center gap-1.5 p-2 px-3 sm:px-4 border-none rounded-lg bg-[#fce8e6] text-[12px] sm:text-[13px] font-medium text-[#c5221f] transition-all hover:bg-[#fadad7]"
+          className="flex items-center gap-1.5 p-2 px-3 sm:px-4 border-none rounded-lg bg-rose-100 dark:bg-rose-900/30 text-[12px] sm:text-[13px] font-medium text-rose-700 dark:text-rose-400 transition-all hover:bg-rose-200 dark:hover:bg-rose-900/50"
           onClick={() => {
             if (onClose) {
               onClose();
@@ -232,7 +232,7 @@ export function ProcessWizard({ data, onClose }: ProcessWizardProps) {
         </button>
 
         <button
-          className="ml-auto flex items-center gap-1.5 p-2 px-3 sm:px-4 border-none rounded-lg bg-[#f1f3f4] text-[12px] sm:text-[13px] font-medium text-[#5f6368] transition-all hover:bg-[#e8eaed] hover:text-[#202124] shrink-0"
+          className="ml-auto flex items-center gap-1.5 p-2 px-3 sm:px-4 border-none rounded-lg bg-accent text-[12px] sm:text-[13px] font-medium text-accent-foreground transition-all hover:bg-accent/80 shrink-0"
           onClick={handleRestart}
         >
           <RotateCcw className="h-4 w-4" /> <span className="hidden xs:inline">Reiniciar</span>
