@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   title: 'Templates AI',
   description: 'AI-powered templates for support agents.',
   icons: {
-    icon: 'https://cloudfront-us-east-1.images.arcpublishing.com/infobae/E3U23KE42NGUDIOKL62NASF7BQ.jpg',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   },
 };
 
