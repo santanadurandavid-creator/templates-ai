@@ -178,12 +178,12 @@ export default function ProcessPage() {
                         <Button variant="outline" size="icon" onClick={() => handleOpenEditDialog(null)}>
                             <Plus className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" onClick={() => setSuggestStepsDialogOpen(true)} className="gap-2">
-                            <Workflow className="h-4 w-4 text-blue-500" />
+                        <Button variant="outline" onClick={() => setSuggestStepsDialogOpen(true)} className="gap-2 h-8 text-xs">
+                            <Workflow className="h-3.5 w-3.5 text-blue-500" />
                             <span className="hidden sm:inline">Sugerir Pasos</span>
                         </Button>
-                        <Button variant="outline" onClick={() => setMappingDialogOpen(true)} className="gap-2">
-                            <Sparkles className="h-4 w-4 text-amber-500" />
+                        <Button variant="outline" onClick={() => setMappingDialogOpen(true)} className="gap-2 h-8 text-xs">
+                            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                             <span className="hidden sm:inline">Mapear (IA)</span>
                         </Button>
                     </div>

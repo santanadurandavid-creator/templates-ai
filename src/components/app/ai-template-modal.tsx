@@ -506,7 +506,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       type="button"
                       onClick={() => handleAiAction('analyze')}
                       disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
-                      className="bg-primary hover:bg-primary/90 h-9 text-[10px] sm:text-xs px-2"
+                      className="bg-primary hover:bg-primary/90 h-7 text-[10px] sm:text-xs px-2"
                     >
                       {isLoading && !isAnalyzingFlow ? (
                         <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -520,7 +520,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       variant="outline"
                       onClick={handleOnlySuggestTag}
                       disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
-                      className="border-primary/20 hover:bg-primary/10 text-primary h-9 text-[10px] sm:text-xs px-2"
+                      className="border-primary/20 hover:bg-primary/10 text-primary h-7 text-[10px] sm:text-xs px-2"
                     >
                       {isSuggestingTag ? (
                         <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -534,7 +534,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       variant="outline"
                       onClick={() => handleAiAction('generate')}
                       disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
-                      className="border-border hover:bg-muted h-9 text-[10px] sm:text-xs px-2"
+                      className="border-border hover:bg-muted h-7 text-[10px] sm:text-xs px-2"
                     >
                       {isLoading && !isAnalyzingFlow ? (
                         <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -548,7 +548,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       variant="outline"
                       onClick={handleAnalyzeFlow}
                       disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
-                      className="border-primary/20 hover:bg-primary/10 text-primary h-9 text-[10px] sm:text-xs px-2"
+                      className="border-primary/20 hover:bg-primary/10 text-primary h-7 text-[10px] sm:text-xs px-2"
                     >
                       {isAnalyzingFlow ? (
                         <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
