@@ -22,7 +22,7 @@ export function TemplateList({ templates, isLoading, onCopy, onEdit, onDelete, o
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
@@ -45,7 +45,7 @@ export function TemplateList({ templates, isLoading, onCopy, onEdit, onDelete, o
   return (
     <div className="space-y-4">
       {templates.length > 0 ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {templates.map((template) => (
             <TemplateCard
               key={template.id}

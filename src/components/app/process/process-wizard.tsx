@@ -206,19 +206,32 @@ export function ProcessWizard({ data }: ProcessWizardProps) {
       </div>
 
       {/* Bottom Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#e8eaed] p-3.5 px-8 flex items-center gap-3 z-[100]">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#e8eaed] p-3.5 px-4 sm:px-8 flex items-center gap-2 sm:gap-3 z-[100]">
         <button
-          className="flex items-center gap-1.5 p-2 px-4 border-[1.5px] border-[#e8eaed] rounded-lg bg-white text-[13px] font-medium text-[#5f6368] transition-all hover:border-[#bdc1c6] hover:text-[#202124] disabled:opacity-30 disabled:pointer-events-none"
+          className="flex items-center gap-1.5 p-2 px-3 sm:px-4 border-[1.5px] border-[#e8eaed] rounded-lg bg-white text-[12px] sm:text-[13px] font-medium text-[#5f6368] transition-all hover:border-[#bdc1c6] hover:text-[#202124] disabled:opacity-30 disabled:pointer-events-none shrink-0"
           onClick={handleBack}
           disabled={history.length === 0 || isAnimating}
         >
-          <ArrowLeft className="h-4 w-4" /> Atrás
+          <ArrowLeft className="h-4 w-4" /> <span className="hidden xs:inline">Atrás</span>
         </button>
+
         <button
-          className="ml-auto flex items-center gap-1.5 p-2 px-4 border-none rounded-lg bg-[#f1f3f4] text-[13px] font-medium text-[#5f6368] transition-all hover:bg-[#e8eaed] hover:text-[#202124]"
+          className="flex items-center gap-1.5 p-2 px-3 sm:px-4 border-none rounded-lg bg-[#fce8e6] text-[12px] sm:text-[13px] font-medium text-[#c5221f] transition-all hover:bg-[#fadad7]"
+          onClick={() => {
+            const closeBtn = document.querySelector('[role="dialog"] button[aria-label="Close"]') as HTMLButtonElement;
+            if (closeBtn) closeBtn.click();
+            // Fallback en caso de que no lo encuentre (ej: si no es un Dialog de Radix exactamente así)
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+          }}
+        >
+          <RotateCcw className="h-4 w-4 rotate-45" /> Cerrar
+        </button>
+
+        <button
+          className="ml-auto flex items-center gap-1.5 p-2 px-3 sm:px-4 border-none rounded-lg bg-[#f1f3f4] text-[12px] sm:text-[13px] font-medium text-[#5f6368] transition-all hover:bg-[#e8eaed] hover:text-[#202124] shrink-0"
           onClick={handleRestart}
         >
-          <RotateCcw className="h-4 w-4" /> Reiniciar
+          <RotateCcw className="h-4 w-4" /> <span className="hidden xs:inline">Reiniciar</span>
         </button>
       </div>
     </div>
