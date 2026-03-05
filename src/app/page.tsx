@@ -24,6 +24,7 @@ import { RephraseHistorySheet } from '@/components/app/rephrase-history-sheet';
 import { useRephraseHistory } from '@/hooks/use-rephrase-history';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import {
   Carousel,
   CarouselContent,
@@ -269,9 +270,20 @@ export default function TemplatesPage() {
                   {/* Acciones de Notas Rápidas Colapsables */}
                   <div ref={quickActionsRef} className="flex items-center gap-1.5 shrink-0 pl-1 border-l ml-1 border-accent/10 overflow-hidden">
                     <div className={cn(
-                      "flex items-center gap-1.5 transition-all duration-300 ease-in-out",
-                      (isQuickActionsExpanded || isQuickEditMode) ? "max-w-[200px] opacity-100" : "max-w-0 opacity-0 pointer-events-none"
+                      "flex items-center gap-2 transition-all duration-300 ease-in-out",
+                      (isQuickActionsExpanded || isQuickEditMode) ? "max-w-[280px] opacity-100" : "max-w-0 opacity-0 pointer-events-none"
                     )}>
+                      {/* Switch para Top 7 */}
+                      <div className="flex items-center gap-1.5 mr-1 shrink-0">
+                        <span className="text-[9px] font-bold text-muted-foreground uppercase hidden sm:inline">Top 7</span>
+                        <Switch
+                          checked={showTopUsed}
+                          onCheckedChange={setShowTopUsed}
+                          className="scale-75 origin-right"
+                          title="Mostrar/Ocultar Top 7"
+                        />
+                      </div>
+                      <Separator orientation="vertical" className="h-4 bg-accent/20" />
                       <Button
                         type="button"
                         variant={isQuickEditMode ? "default" : "ghost"}
@@ -322,19 +334,6 @@ export default function TemplatesPage() {
                   </div>
                 </div>
 
-                {/* Toggle Top 7 si no está visible */}
-                {!showTopUsed && (
-                  <div className="flex justify-start">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowTopUsed(true)}
-                      className="h-7 text-[10px] px-2 border-accent/10 text-muted-foreground hover:text-accent"
-                    >
-                      Ver Top 7
-                    </Button>
-                  </div>
-                )}
               </div>
 
               <QuickTemplatesGrid
