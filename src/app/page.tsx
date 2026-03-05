@@ -16,7 +16,7 @@ import { ManageQuickCategoriesDialog } from '@/components/app/manage-quick-categ
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Copy, Settings, Plus } from 'lucide-react';
+import { Copy, Settings, Plus, Pencil, Check } from 'lucide-react';
 import { cn, eventBus } from '@/lib/utils';
 import { EditTemplateDialog } from '@/components/app/edit-template-dialog';
 import { rephraseTemplate } from '@/ai/flows/rephrase-template-flow';
@@ -34,6 +34,7 @@ export default function TemplatesPage() {
   const [isQuickTemplateDialogOpen, setQuickTemplateDialogOpen] = useState(false);
   const [editingQuickTemplate, setEditingQuickTemplate] = useState<Template | null>(null);
   const [isManageCategoriesOpen, setManageCategoriesOpen] = useState(false);
+  const [isQuickEditMode, setIsQuickEditMode] = useState(false);
 
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
@@ -215,60 +216,82 @@ export default function TemplatesPage() {
 
           <Card className="border-accent/20">
             <CardContent className="pt-6 space-y-4">
-              <div className="flex flex-row items-center justify-between gap-2">
-                {/* Selector de categoría y botón añadir */}
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <Select value={selectedQuickCategory} onValueChange={setSelectedQuickCategory}>
-                    <SelectTrigger className="w-[130px] sm:w-[180px] h-9 text-xs font-semibold shrink-0">
-                      <SelectValue placeholder="Notas Rápidas" />
-                    </SelectTrigger>
-                    <SelectContent>
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  {/* Lista Horizontal de Categorías */}
+                  <div className="flex-1 overflow-x-auto no-scrollbar scroll-smooth">
+                    <div className="flex items-center gap-1.5 pb-1">
                       {quickCategories.map(cat => (
-                        <SelectItem key={cat} value={cat} className="text-xs">
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedQuickCategory(cat)}
+                          className={cn(
+                            "whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-semibold transition-all border shrink-0",
+                            selectedQuickCategory === cat
+                              ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                              : "bg-muted/50 text-muted-foreground border-transparent hover:bg-muted"
+                          )}
+                        >
                           {cat === 'All' ? 'Todas las Notas' : cat}
-                        </SelectItem>
+                        </button>
                       ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-9 w-9 border-accent/20 text-accent hover:bg-accent/10 shrink-0"
-                    onClick={() => handleOpenQuickTemplateDialog(null)}
-                    title="Añadir Nota Rápida"
-                  >
-                    <Plus className="h-5 w-5" />
-                  </Button>
+                    </div>
+                  </div>
+
+                  {/* Acciones de Notas Rápidas */}
+                  <div className="flex items-center gap-1.5 shrink-0 pl-1 border-l ml-1 border-accent/10">
+                    <Button
+                      variant={isQuickEditMode ? "default" : "ghost"}
+                      size="icon"
+                      className={cn(
+                        "h-8 w-8 transition-all shrink-0",
+                        isQuickEditMode ? "animate-pulse shadow-md" : "text-muted-foreground hover:text-accent hover:bg-accent/10"
+                      )}
+                      onClick={() => setIsQuickEditMode(!isQuickEditMode)}
+                      title={isQuickEditMode ? "Finalizar Edición" : "Editar Cuadrícula"}
+                    >
+                      {isQuickEditMode ? <Check className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-accent hover:bg-accent/10 shrink-0"
+                      onClick={() => setManageCategoriesOpen(true)}
+                      title="Gestionar Categorías"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 border-accent/20 text-accent hover:bg-accent/10 shrink-0"
+                      onClick={() => handleOpenQuickTemplateDialog(null)}
+                      title="Añadir Nota Rápida"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
 
-                {/* Botón Gestionar Categorías y Toggle Top 7 */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-accent hover:bg-accent/10"
-                    onClick={() => setManageCategoriesOpen(true)}
-                    title="Gestionar Categorías"
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                  {!showTopUsed && (
+                {/* Toggle Top 7 si no está visible */}
+                {!showTopUsed && (
+                  <div className="flex justify-start">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setShowTopUsed(true)}
-                      className="h-8 text-[10px] sm:text-xs px-2"
+                      className="h-7 text-[10px] px-2 border-accent/10 text-muted-foreground hover:text-accent"
                     >
                       Ver Top 7
                     </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
               <QuickTemplatesGrid
                 templates={filteredQuickTemplates}
                 isLoading={isLoading}
-                isEditMode={false}
+                isEditMode={isQuickEditMode}
                 onCopy={(content, title, id) => handleCopy(content, title, id)}
                 onEdit={handleOpenQuickTemplateDialog}
                 onDelete={handleDelete}
