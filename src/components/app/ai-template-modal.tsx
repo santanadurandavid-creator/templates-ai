@@ -75,7 +75,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
   const [isTagHistoryOpen, setTagHistoryOpen] = useState(false);
   const [isAnalysisHistoryOpen, setAnalysisHistoryOpen] = useState(false);
   const [isNoProcessAlertOpen, setNoProcessAlertOpen] = useState(false);
-  
+
   const [viewingProcess, setViewingProcess] = useState<KnowledgeProcess | null>(null);
   const [isProcessViewOpen, setProcessViewOpen] = useState(false);
 
@@ -192,9 +192,9 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
         });
 
         const severityColors = {
-          VERDE: 'text-green-600 font-bold',
-          AMARILLO: 'text-yellow-600 font-bold',
-          ROJO: 'text-red-600 font-bold',
+          VERDE: 'text-emerald-500 font-bold',
+          AMARILLO: 'text-amber-500 font-bold',
+          ROJO: 'text-rose-500 font-bold',
         };
 
         update({
@@ -205,14 +205,14 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
             <div className="mt-2 space-y-2 border-t pt-2 border-primary/10">
               <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Análisis de la IA:</p>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                   <Tag className="h-3 w-3 mr-1" /> {result.data.tag}
                 </Badge>
-                <span className={cn("text-xs", severityColors[result.data.severity])}>
+                <span className={cn("text-xs font-bold", severityColors[result.data.severity])}>
                   [{result.data.severity}]
                 </span>
               </div>
-              <p className="text-xs italic text-slate-600">"{result.data.justification}"</p>
+              <p className="text-xs italic text-muted-foreground">"{result.data.justification}"</p>
             </div>
           ),
           duration: 12000,
@@ -251,7 +251,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
 
     try {
       const knowledgeBaseContent = knowledgeBase.map(p => `${p.title}`).join('\n');
-      
+
       const result = await generateEmpatheticTemplate({
         context: context,
         existingTemplates: [], // No necesitamos plantillas para buscar solo el flujo
@@ -262,12 +262,12 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
       if (result.success && result.data) {
         // Guardar la sugerencia de tag aunque solo busquemos flujo
         if (result.data.recommendedTag) {
-            addTagSuggestion({
-                situation: context,
-                tag: result.data.recommendedTag,
-                severity: 'VERDE', // Valor por defecto ya que este flujo no da severidad
-                justification: 'Identificado durante análisis de flujo.',
-            });
+          addTagSuggestion({
+            situation: context,
+            tag: result.data.recommendedTag,
+            severity: 'VERDE', // Valor por defecto ya que este flujo no da severidad
+            justification: 'Identificado durante análisis de flujo.',
+          });
         }
 
         if (result.data.matchedProcessTitle) {
@@ -317,61 +317,61 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
   const handleOpenProcess = async (title?: string) => {
     if (!title) return;
     const process = knowledgeBase.find(p => p.title.toLowerCase().trim() === title.toLowerCase().trim());
-    
+
     if (!process) {
-        toast({
-            variant: 'destructive',
-            title: 'Proceso no encontrado',
-            description: `No se encontró el proceso "${title}" en la base de conocimientos.`
-        });
-        return;
+      toast({
+        variant: 'destructive',
+        title: 'Proceso no encontrado',
+        description: `No se encontró el proceso "${title}" en la base de conocimientos.`
+      });
+      return;
     }
 
     // Si ya es un JSON de flujo, lo abrimos directamente
     if (process.description.trim().startsWith('{')) {
-        setViewingProcess(process);
-        setProcessViewOpen(true);
-        return;
+      setViewingProcess(process);
+      setProcessViewOpen(true);
+      return;
     }
 
     // Si es texto plano, lo mapeamos a flujo interactivo
     setIsMappingFlow(process.id);
     const { id: toastId, update } = toast({
-        title: 'Estructurando flujo interactivo...',
-        description: 'La IA está diseñando el protocolo dinámico.',
+      title: 'Estructurando flujo interactivo...',
+      description: 'La IA está diseñando el protocolo dinámico.',
     });
 
     try {
-        const result = await mapProcess({
-            processDescription: process.description,
-            existingProcesses: knowledgeBase,
-        });
+      const result = await mapProcess({
+        processDescription: process.description,
+        existingProcesses: knowledgeBase,
+      });
 
-        if (result.success && result.data) {
-            const updated = { ...process, description: result.data.description };
-            updateProcess(updated);
-            
-            update({
-                id: toastId,
-                title: '¡Flujo Estructurado!',
-                description: 'El proceso ahora es interactivo.',
-                variant: 'default',
-            });
+      if (result.success && result.data) {
+        const updated = { ...process, description: result.data.description };
+        updateProcess(updated);
 
-            setViewingProcess(updated);
-            setProcessViewOpen(true);
-        } else {
-            throw new Error(result.error || 'No se pudo generar el flujo.');
-        }
-    } catch (error: any) {
         update({
-            id: toastId,
-            title: 'Error de IA',
-            description: error.message,
-            variant: 'destructive',
+          id: toastId,
+          title: '¡Flujo Estructurado!',
+          description: 'El proceso ahora es interactivo.',
+          variant: 'default',
         });
+
+        setViewingProcess(updated);
+        setProcessViewOpen(true);
+      } else {
+        throw new Error(result.error || 'No se pudo generar el flujo.');
+      }
+    } catch (error: any) {
+      update({
+        id: toastId,
+        title: 'Error de IA',
+        description: error.message,
+        variant: 'destructive',
+      });
     } finally {
-        setIsMappingFlow(null);
+      setIsMappingFlow(null);
     }
   };
 
@@ -392,9 +392,9 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
   };
 
   const severityBadgeColors = {
-    VERDE: 'bg-green-100 text-green-800 border-green-200',
-    AMARILLO: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    ROJO: 'bg-red-100 text-red-800 border-red-200',
+    VERDE: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+    AMARILLO: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+    ROJO: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
   };
 
   const renderTime = (dateStr?: string) => {
@@ -420,8 +420,8 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
               </DialogDescription>
             </div>
             <Button variant="outline" size="sm" onClick={() => setRulesDialogOpen(true)} className="gap-2 h-8 text-xs">
-               <Settings2 className="h-4 w-4" />
-               Reglas de Tags
+              <Settings2 className="h-4 w-4" />
+              Reglas de Tags
             </Button>
           </DialogHeader>
 
@@ -435,7 +435,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                     Historial
                   </Button>
                   <Button variant="ghost" size="sm" onClick={() => setTagHistoryOpen(true)} className="h-7 gap-1 text-[10px] sm:text-xs">
-                    <History className="h-3 w-3 text-blue-500" />
+                    <History className="h-3 w-3 text-primary" />
                     Tags
                   </Button>
                 </div>
@@ -460,10 +460,10 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                     )}
                   />
                   <div className="grid grid-cols-2 gap-2">
-                    <Button 
-                      type="button" 
-                      onClick={() => handleAiAction('analyze')} 
-                      disabled={isLoading || isSuggestingTag || isAnalyzingFlow} 
+                    <Button
+                      type="button"
+                      onClick={() => handleAiAction('analyze')}
+                      disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
                       className="bg-primary hover:bg-primary/90 h-9 text-[10px] sm:text-xs px-2"
                     >
                       {isLoading && !isAnalyzingFlow ? (
@@ -473,12 +473,12 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       )}
                       Analizar
                     </Button>
-                    <Button 
-                      type="button" 
+                    <Button
+                      type="button"
                       variant="outline"
-                      onClick={handleOnlySuggestTag} 
-                      disabled={isLoading || isSuggestingTag || isAnalyzingFlow} 
-                      className="border-blue-200 hover:bg-blue-50 text-blue-700 h-9 text-[10px] sm:text-xs px-2"
+                      onClick={handleOnlySuggestTag}
+                      disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
+                      className="border-primary/20 hover:bg-primary/10 text-primary h-9 text-[10px] sm:text-xs px-2"
                     >
                       {isSuggestingTag ? (
                         <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -487,12 +487,12 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       )}
                       Solo Tag
                     </Button>
-                    <Button 
-                      type="button" 
+                    <Button
+                      type="button"
                       variant="outline"
-                      onClick={() => handleAiAction('generate')} 
+                      onClick={() => handleAiAction('generate')}
                       disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
-                      className="border-slate-200 hover:bg-slate-50 h-9 text-[10px] sm:text-xs px-2"
+                      className="border-border hover:bg-muted h-9 text-[10px] sm:text-xs px-2"
                     >
                       {isLoading && !isAnalyzingFlow ? (
                         <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -501,12 +501,12 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       )}
                       Plantilla
                     </Button>
-                    <Button 
-                      type="button" 
+                    <Button
+                      type="button"
                       variant="outline"
-                      onClick={handleAnalyzeFlow} 
+                      onClick={handleAnalyzeFlow}
                       disabled={isLoading || isSuggestingTag || isAnalyzingFlow}
-                      className="border-amber-200 hover:bg-amber-50 text-amber-700 h-9 text-[10px] sm:text-xs px-2"
+                      className="border-primary/20 hover:bg-primary/10 text-primary h-9 text-[10px] sm:text-xs px-2"
                     >
                       {isAnalyzingFlow ? (
                         <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -527,9 +527,9 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                   <div className="space-y-3 sm:space-y-4">
                     {aiHistory.map((item) => (
                       <Card key={item.id} className="bg-muted/30 border-primary/10 relative group">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
                           onClick={() => deleteAiHistory(item.id)}
                         >
@@ -545,52 +545,52 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                             )}
                           </div>
                           {item.recommendedTag && (
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[8px] sm:text-[10px] px-1.5 py-0 flex items-center gap-1 shrink-0">
-                               <Tag className="h-2 w-2 sm:h-3 sm:w-3" />
-                               {item.recommendedTag}
+                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[8px] sm:text-[10px] px-1.5 py-0 flex items-center gap-1 shrink-0">
+                              <Tag className="h-2 w-2 sm:h-3 sm:w-3" />
+                              {item.recommendedTag}
                             </Badge>
                           )}
                         </CardHeader>
                         <CardContent className="pb-3 sm:pb-4 px-3 sm:px-4 space-y-2 sm:space-y-3">
                           {item.summary && item.summary !== 'Generación directa de plantilla.' && (
-                            <div className="bg-white/50 p-1.5 sm:p-2 rounded border border-primary/5">
-                                <p className="text-[8px] sm:text-[10px] uppercase font-bold text-primary tracking-wider mb-0.5">Resumen:</p>
-                                <p className="text-[10px] sm:text-xs italic text-slate-700 leading-tight">{item.summary}</p>
+                            <div className="bg-background/50 p-1.5 sm:p-2 rounded border border-primary/10">
+                              <p className="text-[8px] sm:text-[10px] uppercase font-bold text-primary tracking-wider mb-0.5">Resumen:</p>
+                              <p className="text-[10px] sm:text-xs italic text-muted-foreground leading-tight">{item.summary}</p>
                             </div>
                           )}
                           <div>
                             <p className="text-[8px] sm:text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Propuesta:</p>
-                            <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-snug">{item.content}</p>
+                            <p className="text-xs sm:text-sm text-foreground line-clamp-2 leading-snug">{item.content}</p>
                           </div>
                           <div className="flex flex-wrap gap-1.5 pt-1">
                             <Button size="sm" variant="ghost" className="h-7 sm:h-8 text-[10px] sm:text-xs px-2" onClick={() => copy(item.content)}>
                               <Copy className="mr-1.5 h-3 w-3 sm:h-3.5 sm:w-3.5" /> Copiar
                             </Button>
-                            
+
                             {item.summary !== 'Generación directa de plantilla.' && (
                               item.matchedProcessTitle ? (
-                                <Button 
-                                  size="sm" 
-                                  variant="outline" 
-                                  className="h-7 sm:h-8 text-[10px] sm:text-xs px-2 border-blue-200 text-blue-700 hover:bg-blue-50" 
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-7 sm:h-8 text-[10px] sm:text-xs px-2 border-primary/20 text-primary hover:bg-primary/10"
                                   onClick={() => handleOpenProcess(item.matchedProcessTitle)}
                                   disabled={isMappingFlow !== null}
                                 >
-                                    {isMappingFlow === knowledgeBase.find(p => p.title.toLowerCase() === item.matchedProcessTitle?.toLowerCase())?.id ? (
-                                        <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                                    ) : (
-                                        <PlayCircle className="mr-1.5 h-3.5 w-3.5 sm:h-3.5 sm:w-3.5" />
-                                    )}
-                                    Proceso
+                                  {isMappingFlow === knowledgeBase.find(p => p.title.toLowerCase() === item.matchedProcessTitle?.toLowerCase())?.id ? (
+                                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <PlayCircle className="mr-1.5 h-3.5 w-3.5 sm:h-3.5 sm:w-3.5" />
+                                  )}
+                                  Proceso
                                 </Button>
                               ) : (
-                                <Button 
-                                  size="sm" 
-                                  variant="outline" 
+                                <Button
+                                  size="sm"
+                                  variant="outline"
                                   disabled
                                   className="h-7 sm:h-8 text-[10px] sm:text-xs px-2 border-red-200 text-red-600 bg-red-50"
                                 >
-                                    <AlertCircle className="mr-1.5 h-3.5 w-3.5 sm:h-3.5 sm:w-3.5" /> Sin Flujo
+                                  <AlertCircle className="mr-1.5 h-3.5 w-3.5 sm:h-3.5 sm:w-3.5" /> Sin Flujo
                                 </Button>
                               )
                             )}
@@ -621,8 +621,8 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-amber-600" />
-                Proceso No Encontrado
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+              Proceso No Encontrado
             </AlertDialogTitle>
             <AlertDialogDescription>
               No se localizó un proceso específico en la base de conocimientos que concuerde con esta situación.
@@ -647,26 +647,26 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
             {aiHistory.length > 0 ? (
               <div className="space-y-4">
                 {aiHistory.map((item) => (
-                  <Card key={item.id} className="bg-slate-50 border-slate-200 relative group">
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
-                        onClick={() => deleteAiHistory(item.id)}
+                  <Card key={item.id} className="bg-muted/30 border-primary/10 relative group">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
+                      onClick={() => deleteAiHistory(item.id)}
                     >
-                        <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                     <CardHeader className="pb-2 pt-4 flex flex-row items-center justify-between pr-12">
                       <div className="flex items-center gap-2">
-                         <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] sm:text-xs">
-                            {item.title}
-                         </Badge>
-                         {item.recommendedTag && (
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] sm:text-xs">
-                              <Tag className="h-3 w-3 mr-1" />
-                              {item.recommendedTag}
-                            </Badge>
-                         )}
+                        <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] sm:text-xs">
+                          {item.title}
+                        </Badge>
+                        {item.recommendedTag && (
+                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] sm:text-xs">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {item.recommendedTag}
+                          </Badge>
+                        )}
                       </div>
                       {item.createdAt && (
                         <span className="text-[10px] text-muted-foreground">
@@ -676,50 +676,50 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                     </CardHeader>
                     <CardContent className="pb-4 space-y-4 px-3 sm:px-6">
                       <div>
-                        <p className="text-[10px] uppercase font-bold text-slate-500 tracking-tight mb-1">Mensaje Original:</p>
-                        <p className="text-xs text-slate-600 line-clamp-3 bg-white p-2 rounded border border-slate-100 italic">"{item.context}"</p>
+                        <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight mb-1">Mensaje Original:</p>
+                        <p className="text-xs text-muted-foreground line-clamp-3 bg-muted/50 p-2 rounded border border-primary/5 italic">"{item.context}"</p>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <p className="text-[10px] uppercase font-bold text-primary tracking-tight mb-1">Análisis:</p>
-                          <p className="text-sm text-slate-800 font-medium leading-tight">{item.summary}</p>
+                          <p className="text-sm font-medium leading-tight text-foreground">{item.summary}</p>
                         </div>
                         <div>
                           <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-tight mb-1">Respuesta:</p>
-                          <p className="text-sm text-slate-600 line-clamp-3 leading-snug">{item.content}</p>
+                          <p className="text-sm text-muted-foreground line-clamp-3 leading-snug">{item.content}</p>
                         </div>
                       </div>
                       <div className="flex flex-wrap justify-end pt-2 gap-2">
-                         {item.summary !== 'Generación directa de plantilla.' && (
-                            item.matchedProcessTitle ? (
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                className="h-8 text-xs border-blue-200 text-blue-700 hover:bg-blue-50" 
-                                onClick={() => handleOpenProcess(item.matchedProcessTitle)}
-                                disabled={isMappingFlow !== null}
-                              >
-                                  {isMappingFlow === knowledgeBase.find(p => p.title.toLowerCase() === item.matchedProcessTitle?.toLowerCase())?.id ? (
-                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  ) : (
-                                      <PlayCircle className="mr-2 h-4 w-4" />
-                                  )}
-                                  Ver Flujo
-                              </Button>
-                            ) : (
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                disabled
-                                className="h-8 text-xs border-red-200 text-red-600 bg-red-50 opacity-100"
-                              >
-                                  <AlertCircle className="mr-2 h-4 w-4" /> Sin Flujo
-                              </Button>
-                            )
-                         )}
-                         <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => copy(item.content)}>
-                            <Copy className="mr-2 h-4 w-4" /> Copiar Respuesta
-                         </Button>
+                        {item.summary !== 'Generación directa de plantilla.' && (
+                          item.matchedProcessTitle ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 text-xs border-primary/20 text-primary hover:bg-primary/10"
+                              onClick={() => handleOpenProcess(item.matchedProcessTitle)}
+                              disabled={isMappingFlow !== null}
+                            >
+                              {isMappingFlow === knowledgeBase.find(p => p.title.toLowerCase() === item.matchedProcessTitle?.toLowerCase())?.id ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              ) : (
+                                <PlayCircle className="mr-2 h-4 w-4" />
+                              )}
+                              Ver Flujo
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled
+                              className="h-8 text-xs border-destructive/20 text-destructive bg-destructive/5 opacity-100"
+                            >
+                              <AlertCircle className="mr-2 h-4 w-4" /> Sin Flujo
+                            </Button>
+                          )
+                        )}
+                        <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => copy(item.content)}>
+                          <Copy className="mr-2 h-4 w-4" /> Copiar Respuesta
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -740,7 +740,7 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
         <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <History className="text-blue-500 h-5 w-5" />
+              <History className="text-primary h-5 w-5" />
               Sugerencias de Tags
             </DialogTitle>
           </DialogHeader>
@@ -748,24 +748,24 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
             {tagSuggestions.length > 0 ? (
               <div className="space-y-4">
                 {tagSuggestions.map((suggestion) => (
-                  <Card key={suggestion.id} className="bg-slate-50 border-slate-200 relative group">
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
-                        onClick={() => deleteTagSuggestion(suggestion.id)}
+                  <Card key={suggestion.id} className="bg-muted/30 border-primary/10 relative group">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10"
+                      onClick={() => deleteTagSuggestion(suggestion.id)}
                     >
-                        <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                     <CardHeader className="pb-2 pt-4 flex flex-row items-center justify-between pr-12">
                       <div className="flex items-center gap-2">
-                         <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] sm:text-xs">
-                            <Tag className="h-3 w-3 mr-1" />
-                            {suggestion.tag}
-                         </Badge>
-                         <Badge variant="secondary" className={cn("text-[9px] sm:text-[10px]", severityBadgeColors[suggestion.severity])}>
-                            {suggestion.severity}
-                         </Badge>
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] sm:text-xs">
+                          <Tag className="h-3 w-3 mr-1" />
+                          {suggestion.tag}
+                        </Badge>
+                        <Badge variant="secondary" className={cn("text-[9px] sm:text-[10px]", severityBadgeColors[suggestion.severity])}>
+                          {suggestion.severity}
+                        </Badge>
                       </div>
                       {suggestion.createdAt && (
                         <span className="text-[10px] text-muted-foreground">
@@ -774,10 +774,10 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
                       )}
                     </CardHeader>
                     <CardContent className="pb-4 px-3 sm:px-6">
-                      <p className="text-[10px] font-semibold mb-1 text-slate-500 uppercase tracking-tight">Situación:</p>
-                      <p className="text-xs sm:text-sm text-slate-700 line-clamp-2 mb-3 bg-white p-2 rounded border border-slate-100 italic">"{suggestion.situation}"</p>
-                      <p className="text-[10px] font-semibold mb-1 text-slate-500 uppercase tracking-tight">Justificación:</p>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-tight">{suggestion.justification}</p>
+                      <p className="text-[10px] font-semibold mb-1 text-muted-foreground uppercase tracking-tight">Situación:</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mb-3 bg-muted/50 p-2 rounded border border-primary/5 italic">"{suggestion.situation}"</p>
+                      <p className="text-[10px] font-semibold mb-1 text-muted-foreground uppercase tracking-tight">Justificación:</p>
+                      <p className="text-xs sm:text-sm text-foreground leading-tight">{suggestion.justification}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -801,12 +801,12 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
             </DialogDescription>
           </DialogHeader>
           <div className="py-2 sm:py-4">
-             <Textarea
-               placeholder="Ej: Tag 'Accidente': usar cuando el cliente reporta choque. Gravedad: Roja."
-               className="min-h-[250px] sm:min-h-[300px] text-sm"
-               value={tagRules}
-               onChange={(e) => setTagRules(e.target.value)}
-             />
+            <Textarea
+              placeholder="Ej: Tag 'Accidente': usar cuando el cliente reporta choque. Gravedad: Roja."
+              className="min-h-[250px] sm:min-h-[300px] text-sm"
+              value={tagRules}
+              onChange={(e) => setTagRules(e.target.value)}
+            />
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button onClick={() => setRulesDialogOpen(false)} className="w-full sm:w-auto h-9 text-sm">Guardar Reglas</Button>
@@ -831,11 +831,11 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
       />
 
       {viewingProcess && (
-          <ViewProcessDialog 
-            process={viewingProcess}
-            open={isProcessViewOpen}
-            onOpenChange={setProcessViewOpen}
-          />
+        <ViewProcessDialog
+          process={viewingProcess}
+          open={isProcessViewOpen}
+          onOpenChange={setProcessViewOpen}
+        />
       )}
     </>
   );

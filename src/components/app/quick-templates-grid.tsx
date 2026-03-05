@@ -111,7 +111,7 @@ const QuickTemplateButton: React.FC<QuickTemplateButtonProps> = ({ template, ind
                   onEdit(template);
                 }}
               >
-                <Edit className="h-3 w-3 text-blue-600" />
+                <Edit className="h-3 w-3 text-primary" />
               </Button>
               <AlertDialogTrigger asChild>
                 <Button

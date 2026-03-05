@@ -40,29 +40,33 @@ body {
   }
 
   .dark {
-    /* Base oscura con #23343c (rgba 35,52,60) como color principal */
-    --background: 203 27% 18%;
-    --foreground: 210 40% 95%;
-    --card: 203 27% 21%;
-    --card-foreground: 210 40% 95%;
-    --popover: 203 27% 19%;
-    --popover-foreground: 210 40% 95%;
-    --primary: 203 20% 75%;
-    /* Grayish Blue suave */
-    --primary-foreground: 203 27% 12%;
-    --secondary: 203 27% 25%;
-    --secondary-foreground: 210 40% 90%;
-    --muted: 203 27% 24%;
-    --muted-foreground: 210 20% 65%;
-    --accent: 203 20% 60%;
-    /* Grayish Blue acentuado */
-    --accent-foreground: 203 27% 12%;
+    /* Base oscura enfocada en legibilidad y estética premium */
+    --background: 200 26% 12%;
+    /* Más profundo para contraste */
+    --foreground: 210 40% 98%;
+    /* Blanco casi puro */
+    --card: 200 26% 18%;
+    /* El color #23343c del usuario */
+    --card-foreground: 210 40% 98%;
+    --popover: 200 26% 15%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    /* Un azul vibrante que "brilla" */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 200 26% 25%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 200 26% 22%;
+    --muted-foreground: 200 15% 75%;
+    /* Más claro para legibilidad en textos secundarios */
+    --accent: 199 89% 48%;
+    /* Mismo azul vibrante para acentos */
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
-    --border: 203 27% 30%;
-    --input: 203 27% 28%;
-    --ring: 203 20% 60%;
-    --chart-1: 199 80% 60%;
+    --border: 200 26% 28%;
+    --input: 200 26% 28%;
+    --ring: 199 89% 48%;
+    --chart-1: 199 89% 48%;
     --chart-2: 160 60% 50%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 65%;

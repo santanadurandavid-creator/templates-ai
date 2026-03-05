@@ -73,13 +73,13 @@ export function ManageQuickCategoriesDialog({
                 <div key={cat} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50 border">
                   {editingCategory === cat ? (
                     <div className="flex-1 flex gap-2 mr-2">
-                      <Input 
-                        value={newName} 
+                      <Input
+                        value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         className="h-8 text-sm"
                         autoFocus
                       />
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-green-600" onClick={handleSave}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-500" onClick={handleSave}>
                         <Check className="h-4 w-4" />
                       </Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => setEditingCategory(null)}>
