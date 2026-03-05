@@ -22,6 +22,7 @@ import { EditTemplateDialog } from '@/components/app/edit-template-dialog';
 import { rephraseTemplate } from '@/ai/flows/rephrase-template-flow';
 import { RephraseHistorySheet } from '@/components/app/rephrase-history-sheet';
 import { useRephraseHistory } from '@/hooks/use-rephrase-history';
+import useLocalStorage from '@/hooks/use-local-storage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function TemplatesPage() {
