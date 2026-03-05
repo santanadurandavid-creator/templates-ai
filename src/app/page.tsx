@@ -54,6 +54,7 @@ export default function TemplatesPage() {
   const { toast, dismiss } = useToast();
   const { addRephraseHistory } = useRephraseHistory();
   const lastToastId = useRef<string | null>(null);
+  const quickActionsRef = useRef<HTMLDivElement>(null);
 
   const uniqueTemplates = useMemo(() => {
     const seenIds = new Set();
@@ -70,7 +71,19 @@ export default function TemplatesPage() {
     const unsubscribe = eventBus.on('open-quick-template-dialog', () => {
       handleOpenQuickTemplateDialog(null);
     });
-    return () => unsubscribe();
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (quickActionsRef.current && !quickActionsRef.current.contains(event.target as Node)) {
+        setIsQuickActionsExpanded(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      unsubscribe();
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -254,7 +267,7 @@ export default function TemplatesPage() {
                   </div>
 
                   {/* Acciones de Notas Rápidas Colapsables */}
-                  <div className="flex items-center gap-1.5 shrink-0 pl-1 border-l ml-1 border-accent/10 overflow-hidden">
+                  <div ref={quickActionsRef} className="flex items-center gap-1.5 shrink-0 pl-1 border-l ml-1 border-accent/10 overflow-hidden">
                     <div className={cn(
                       "flex items-center gap-1.5 transition-all duration-300 ease-in-out",
                       (isQuickActionsExpanded || isQuickEditMode) ? "max-w-[200px] opacity-100" : "max-w-0 opacity-0 pointer-events-none"
