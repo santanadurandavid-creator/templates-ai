@@ -58,12 +58,6 @@ export function TopUsedTemplates({ templates, isLoading, onCopy, onHide }: TopUs
 
     return (
         <div className="w-full">
-            <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-semibold tracking-tight">Top 7 Usadas</h2>
-                <Button variant="ghost" size="icon" onClick={onHide} className="h-7 w-7">
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                </Button>
-            </div>
             <Carousel
                 opts={{
                     align: 'start',

@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Search, Plus } from 'lucide-react';
 import type { Template } from '@/lib/types';
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,7 @@ interface TemplateSearchAndFiltersProps {
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
   templates: Template[];
+  onAddNew: () => void;
 }
 
 export function TemplateSearchAndFilters({
@@ -27,6 +29,7 @@ export function TemplateSearchAndFilters({
   selectedCategory,
   setSelectedCategory,
   templates,
+  onAddNew,
 }: TemplateSearchAndFiltersProps) {
   const categories = useMemo(() => {
     const allCategories = templates.map((t) => t.category?.trim()).filter(Boolean);
@@ -35,30 +38,39 @@ export function TemplateSearchAndFilters({
   }, [templates]);
 
   return (
-    <div className="flex flex-row gap-2 sm:gap-4 items-center">
-      <div className="relative w-1/2 flex items-center">
+    <div className="flex flex-row gap-2 items-center w-full">
+      <div className="relative flex-1 flex items-center">
         <Input
           type="search"
-          placeholder="Buscar plantillas..."
-          className="pl-10"
+          placeholder="Buscar..."
+          className="pl-9 h-9 text-xs"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       </div>
-      <div className="w-1/2">
+      <div className="flex items-center gap-2">
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger>
-            <SelectValue placeholder="Categoría" />
+          <SelectTrigger className="w-[110px] sm:w-[150px] h-9 text-xs">
+            <SelectValue placeholder="Cat." />
           </SelectTrigger>
           <SelectContent>
             {categories.map((category, index) => (
-              <SelectItem key={`${category}-${index}`} value={category}>
+              <SelectItem key={`${category}-${index}`} value={category} className="text-xs">
                 {category}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onAddNew}
+          className="h-9 w-9 shrink-0 border-accent/20 text-accent hover:bg-accent/10"
+          title="Añadir Nueva Plantilla"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

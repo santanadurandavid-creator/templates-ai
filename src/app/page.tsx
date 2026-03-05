@@ -211,7 +211,7 @@ export default function TemplatesPage() {
     <>
       <div className="flex flex-col h-full">
         <AppHeader />
-        <div className="flex-1 overflow-y-auto space-y-6 pt-4 px-2 pb-24">
+        <div className="flex-1 overflow-y-auto space-y-3 pt-2 px-2 pb-24">
 
           <Card className="border-accent/20">
             <CardContent className="pt-6 space-y-4">
@@ -290,7 +290,6 @@ export default function TemplatesPage() {
             />
           )}
 
-          <Separator />
 
           <TemplateSearchAndFilters
             searchTerm={searchTerm}
@@ -298,6 +297,7 @@ export default function TemplatesPage() {
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
             templates={uniqueTemplates}
+            onAddNew={() => handleOpenEditDialog(null)}
           />
 
           <TemplateList
