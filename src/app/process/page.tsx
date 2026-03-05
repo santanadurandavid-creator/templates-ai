@@ -23,7 +23,7 @@ export default function ProcessPage() {
     const [viewingProcess, setViewingProcess] = useState<KnowledgeProcess | null>(null);
     const [editingProcess, setEditingProcess] = useState<KnowledgeProcess | null>(null);
     const [isGeneratingFlowId, setIsGeneratingFlowId] = useState<string | null>(null);
-    
+
     const [isViewDialogOpen, setViewDialogOpen] = useState(false);
     const [isEditDialogOpen, setEditDialogOpen] = useState(false);
     const [isSuggestStepsDialogOpen, setSuggestStepsDialogOpen] = useState(false);
@@ -67,7 +67,7 @@ export default function ProcessPage() {
             if (result.success && result.data) {
                 const updated = { ...process, description: result.data.description };
                 updateProcess(updated);
-                
+
                 update({
                     id: toastId,
                     title: '¡Flujo generado!',
@@ -110,19 +110,61 @@ export default function ProcessPage() {
         deleteProcess(id);
         setEditDialogOpen(false);
     }
-    
+
     const handleProcessMapped = (mappedData: Omit<KnowledgeProcess, 'id'>) => {
         setMappingDialogOpen(false);
         setEditingProcess(mappedData as KnowledgeProcess);
         setEditDialogOpen(true);
     };
 
+    const handleRegenerateFlow = async () => {
+        if (!viewingProcess) return;
+
+        setIsGeneratingFlowId(viewingProcess.id);
+        const { id: toastId, update } = toast({
+            title: 'Regenerando flujo...',
+            description: 'La IA está rediseñando el protocolo.',
+        });
+
+        try {
+            const result = await mapProcess({
+                processDescription: viewingProcess.description,
+                existingProcesses: knowledgeBase,
+            });
+
+            if (result.success && result.data) {
+                const updated = { ...viewingProcess, description: result.data.description };
+                updateProcess(updated);
+
+                update({
+                    id: toastId,
+                    title: '¡Flujo Regenerado!',
+                    description: 'El diseño del proceso ha sido actualizado.',
+                    variant: 'default',
+                });
+
+                setViewingProcess(updated);
+            } else {
+                throw new Error(result.error || 'No se pudo regenerar el flujo.');
+            }
+        } catch (error: any) {
+            update({
+                id: toastId,
+                title: 'Error de IA',
+                description: error.message,
+                variant: 'destructive',
+            });
+        } finally {
+            setIsGeneratingFlowId(null);
+        }
+    };
+
     return (
         <>
             <div className="container mx-auto p-4 md:pl-24">
-                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
                     <h1 className="text-2xl font-bold text-primary">Base de Conocimientos</h1>
-                    
+
                     <div className="flex w-full sm:w-auto items-center gap-2 flex-wrap justify-end">
                         <div className="relative flex-grow sm:flex-grow-0 w-full sm:w-64">
                             <Input
@@ -137,16 +179,16 @@ export default function ProcessPage() {
                             <Plus className="h-4 w-4" />
                         </Button>
                         <Button variant="outline" onClick={() => setSuggestStepsDialogOpen(true)} className="gap-2">
-                            <Workflow className="h-4 w-4 text-blue-500" /> 
+                            <Workflow className="h-4 w-4 text-blue-500" />
                             <span className="hidden sm:inline">Sugerir Pasos</span>
                         </Button>
                         <Button variant="outline" onClick={() => setMappingDialogOpen(true)} className="gap-2">
-                            <Sparkles className="h-4 w-4 text-amber-500" /> 
+                            <Sparkles className="h-4 w-4 text-amber-500" />
                             <span className="hidden sm:inline">Mapear (IA)</span>
                         </Button>
                     </div>
                 </div>
-                
+
                 {isLoading ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-[250px] w-full" />)}
@@ -176,8 +218,8 @@ export default function ProcessPage() {
                                 </CardHeader>
                                 <CardContent className="flex-grow overflow-hidden">
                                     <p className="text-sm text-muted-foreground line-clamp-3">
-                                        {process.description.trim().startsWith('{') 
-                                            ? "Este proceso tiene un flujo interactivo estructurado." 
+                                        {process.description.trim().startsWith('{')
+                                            ? "Este proceso tiene un flujo interactivo estructurado."
                                             : process.description
                                         }
                                     </p>
@@ -188,8 +230,8 @@ export default function ProcessPage() {
                                             {process.tag}
                                         </Badge>
                                     </div>
-                                    <Button 
-                                        className="w-full gap-2 font-semibold" 
+                                    <Button
+                                        className="w-full gap-2 font-semibold"
                                         onClick={() => handleViewFlow(process)}
                                         disabled={isGeneratingFlowId === process.id}
                                     >
@@ -210,22 +252,24 @@ export default function ProcessPage() {
                         ))}
                     </div>
                 )}
-                 {filteredKnowledgeBase.length === 0 && !isLoading && (
+                {filteredKnowledgeBase.length === 0 && !isLoading && (
                     <div className="text-center py-16">
                         <h3 className="text-lg font-semibold">No se encontraron procesos</h3>
                         <p className="text-muted-foreground">Intenta con otra búsqueda o añade un nuevo proceso.</p>
                     </div>
-                 )}
+                )}
             </div>
 
             {viewingProcess && (
-                <ViewProcessDialog 
+                <ViewProcessDialog
                     process={viewingProcess}
                     open={isViewDialogOpen}
                     onOpenChange={setViewDialogOpen}
+                    onRegenerate={handleRegenerateFlow}
+                    isRegenerating={isGeneratingFlowId === viewingProcess.id}
                 />
             )}
-            
+
             <EditProcessDialog
                 process={editingProcess}
                 allProcesses={knowledgeBase}
@@ -239,7 +283,7 @@ export default function ProcessPage() {
                 open={isSuggestStepsDialogOpen}
                 onOpenChange={setSuggestStepsDialogOpen}
             />
-            
+
             <ProcessMappingDialog
                 open={isMappingDialogOpen}
                 onOpenChange={setMappingDialogOpen}

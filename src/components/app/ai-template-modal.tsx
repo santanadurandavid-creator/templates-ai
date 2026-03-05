@@ -375,6 +375,48 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
     }
   };
 
+  const handleRegenerateFlow = async () => {
+    if (!viewingProcess) return;
+
+    setIsMappingFlow(viewingProcess.id);
+    const { id: toastId, update } = toast({
+      title: 'Regenerando flujo interactivo...',
+      description: 'La IA está rediseñando el protocolo.',
+    });
+
+    try {
+      const result = await mapProcess({
+        processDescription: viewingProcess.description,
+        existingProcesses: knowledgeBase,
+      });
+
+      if (result.success && result.data) {
+        const updated = { ...viewingProcess, description: result.data.description };
+        updateProcess(updated);
+
+        update({
+          id: toastId,
+          title: '¡Flujo Regenerado!',
+          description: 'El diseño del proceso ha sido actualizado.',
+          variant: 'default',
+        });
+
+        setViewingProcess(updated);
+      } else {
+        throw new Error(result.error || 'No se pudo regenerar el flujo.');
+      }
+    } catch (error: any) {
+      update({
+        id: toastId,
+        title: 'Error de IA',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsMappingFlow(null);
+    }
+  };
+
   const handleOpenChange = (isOpen: boolean) => {
     onOpenChange(isOpen);
     if (!isOpen) {
@@ -835,6 +877,8 @@ export function AITemplateModal({ open, onOpenChange, children }: AITemplateModa
           process={viewingProcess}
           open={isProcessViewOpen}
           onOpenChange={setProcessViewOpen}
+          onRegenerate={handleRegenerateFlow}
+          isRegenerating={isMappingFlow === viewingProcess.id}
         />
       )}
     </>

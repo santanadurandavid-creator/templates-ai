@@ -6,14 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProcessWizard } from "./process-wizard";
 import { useMemo } from "react";
+import { RefreshCw, Loader2 } from "lucide-react";
+import { Button as UIButton } from "@/components/ui/button";
 
 interface ViewProcessDialogProps {
     process: KnowledgeProcess;
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onRegenerate?: () => void;
+    isRegenerating?: boolean;
 }
 
-export function ViewProcessDialog({ process, open, onOpenChange }: ViewProcessDialogProps) {
+export function ViewProcessDialog({ process, open, onOpenChange, onRegenerate, isRegenerating }: ViewProcessDialogProps) {
     const treeData = useMemo(() => {
         if (!process?.description) return null;
         let content = process.description.trim();
@@ -40,21 +44,45 @@ export function ViewProcessDialog({ process, open, onOpenChange }: ViewProcessDi
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className={treeData ? "sm:max-w-3xl p-0 h-[90vh] sm:h-auto overflow-hidden border-none shadow-2xl" : "sm:max-w-2xl"}>
                 {/* Título de accesibilidad siempre presente */}
-                <DialogHeader className={treeData ? "sr-only" : "p-6 pb-2"}>
-                    <DialogTitle className="text-xl">{process.title}</DialogTitle>
-                    <DialogDescription className="sr-only">
-                        Visualización del proceso: {process.title}
-                    </DialogDescription>
-                    {!treeData && (
-                        <div className="pt-2">
-                            <Badge variant="secondary">{process.tag}</Badge>
-                        </div>
+                <DialogHeader className={treeData ? "px-4 pt-4 pb-2 bg-background border-b z-20 flex flex-row items-center justify-between space-y-0" : "p-6 pb-2"}>
+                    <div className="flex flex-col gap-1 overflow-hidden">
+                        <DialogTitle className={treeData ? "text-base font-bold text-foreground truncate" : "text-xl truncate"}>{process.title}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            Visualización del proceso: {process.title}
+                        </DialogDescription>
+                        {treeData && (
+                            <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-[10px] h-4 px-1.5 border-accent/20 text-accent font-medium">{process.tag}</Badge>
+                            </div>
+                        )}
+                        {!treeData && (
+                            <div className="pt-2">
+                                <Badge variant="secondary">{process.tag}</Badge>
+                            </div>
+                        )}
+                    </div>
+                    {onRegenerate && (
+                        <UIButton
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-xs gap-2 text-primary hover:bg-primary/5 shrink-0"
+                            onClick={onRegenerate}
+                            disabled={isRegenerating}
+                        >
+                            {isRegenerating ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                                <RefreshCw className="h-3.5 w-3.5" />
+                            )}
+                            <span className="hidden sm:inline">Regenerar Flujo</span>
+                            <span className="sm:hidden">Regenerar</span>
+                        </UIButton>
                     )}
                 </DialogHeader>
 
                 {treeData ? (
                     <div className="flex flex-col h-full bg-slate-50">
-                        <div className="p-4 border-b bg-white flex items-center justify-between shadow-sm z-10">
+                        <div className="sr-only">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-accent/10 rounded-lg">
                                     <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
