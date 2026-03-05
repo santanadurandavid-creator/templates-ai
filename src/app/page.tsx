@@ -16,13 +16,12 @@ import { ManageQuickCategoriesDialog } from '@/components/app/manage-quick-categ
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Copy, Settings, ListFilter, Plus } from 'lucide-react';
+import { Copy, Settings, Plus } from 'lucide-react';
 import { cn, eventBus } from '@/lib/utils';
 import { EditTemplateDialog } from '@/components/app/edit-template-dialog';
 import { rephraseTemplate } from '@/ai/flows/rephrase-template-flow';
 import { RephraseHistorySheet } from '@/components/app/rephrase-history-sheet';
 import { useRephraseHistory } from '@/hooks/use-rephrase-history';
-import { useAppSettings } from '@/hooks/use-app-settings';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function TemplatesPage() {
@@ -44,7 +43,6 @@ export default function TemplatesPage() {
 
   const { copy } = useCopyToClipboard();
   const { toast, dismiss } = useToast();
-  const { isQuickTemplateEditMode, toggleQuickTemplateEditMode } = useAppSettings();
   const { addRephraseHistory } = useRephraseHistory();
   const lastToastId = useRef<string | null>(null);
 
@@ -79,7 +77,7 @@ export default function TemplatesPage() {
     );
 
   const quickTemplates = uniqueTemplates.filter((t) => t.isQuick);
-  
+
   const quickCategories = useMemo(() => {
     const cats = quickTemplates.map(t => t.category).filter(Boolean);
     return ['All', ...Array.from(new Set(cats))].sort((a, b) => a.localeCompare(b));
@@ -138,41 +136,41 @@ export default function TemplatesPage() {
 
     (async () => {
       const result = await rephraseTemplate({
-          title: template.title,
-          content: template.content,
+        title: template.title,
+        content: template.content,
+      });
+
+      if (result.success && result.data) {
+        const rephrased = result.data.rephrasedContent;
+
+        addRephraseHistory({
+          originalTemplateId: template.id,
+          originalContent: template.content,
+          rephrasedContent: rephrased,
         });
 
-        if (result.success && result.data) {
-          const rephrased = result.data.rephrasedContent;
-
-          addRephraseHistory({
-            originalTemplateId: template.id,
-            originalContent: template.content,
-            rephrasedContent: rephrased,
-          });
-
-          update({
-            id: toastId,
-            variant: 'default',
-            title: '¡Versión Parafraseada!',
-            description: (
-              <div className="mt-2 flex flex-col gap-2">
-                <p className="text-sm bg-slate-100 p-2 rounded-md">{rephrased}</p>
-                <Button size="sm" variant="ghost" onClick={() => copy(rephrased)}>
-                  <Copy className="mr-2 h-4 w-4" /> Copiar
-                </Button>
-              </div>
-            ),
-            duration: 15000,
-          });
-        } else {
-          update({
-            id: toastId,
-            variant: 'destructive',
-            title: 'Error de IA',
-            description: result.error || 'No se pudo parafrasear la plantilla.',
-          });
-        }
+        update({
+          id: toastId,
+          variant: 'default',
+          title: '¡Versión Parafraseada!',
+          description: (
+            <div className="mt-2 flex flex-col gap-2">
+              <p className="text-sm bg-slate-100 p-2 rounded-md">{rephrased}</p>
+              <Button size="sm" variant="ghost" onClick={() => copy(rephrased)}>
+                <Copy className="mr-2 h-4 w-4" /> Copiar
+              </Button>
+            </div>
+          ),
+          duration: 15000,
+        });
+      } else {
+        update({
+          id: toastId,
+          variant: 'destructive',
+          title: 'Error de IA',
+          description: result.error || 'No se pudo parafrasear la plantilla.',
+        });
+      }
     })();
   };
 
@@ -216,7 +214,7 @@ export default function TemplatesPage() {
           <Card className="border-accent/20">
             <CardContent className="pt-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Grupo Izquierdo: Categoría y Añadir (Alineados) */}
+                {/* Selector de categoría y botón añadir */}
                 <div className="flex items-center gap-2">
                   <Select value={selectedQuickCategory} onValueChange={setSelectedQuickCategory}>
                     <SelectTrigger className="w-[140px] sm:w-[180px] h-9 text-xs font-semibold">
@@ -230,10 +228,10 @@ export default function TemplatesPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    className="h-9 w-9 border-accent/20 text-accent hover:bg-accent/10 shrink-0" 
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-9 w-9 border-accent/20 text-accent hover:bg-accent/10 shrink-0"
                     onClick={() => handleOpenQuickTemplateDialog(null)}
                     title="Añadir Nota Rápida"
                   >
@@ -241,44 +239,24 @@ export default function TemplatesPage() {
                   </Button>
                 </div>
 
-                {/* Grupo Derecho: Configuración (Engranes alineados a la derecha) */}
+                {/* Botón Gestionar Categorías */}
                 <div className="flex items-center justify-end gap-2">
-                  {isQuickTemplateEditMode && (
-                    <span className="text-[9px] uppercase tracking-wider font-bold text-accent animate-pulse mr-1 hidden sm:inline">
-                      Modo Edición
-                    </span>
-                  )}
-                  <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-lg border border-transparent">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-muted-foreground hover:text-accent hover:bg-accent/10" 
-                      onClick={() => setManageCategoriesOpen(true)}
-                      title="Gestionar Categorías"
-                    >
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                    <div className="w-px h-4 bg-muted-foreground/20 mx-0.5" />
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={toggleQuickTemplateEditMode}
-                      className={cn(
-                        'h-8 w-8 transition-colors', 
-                        isQuickTemplateEditMode ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-accent hover:bg-accent/10'
-                      )}
-                      title="Activar Edición"
-                    >
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-accent hover:bg-accent/10"
+                    onClick={() => setManageCategoriesOpen(true)}
+                    title="Gestionar Categorías"
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
 
               <QuickTemplatesGrid
                 templates={filteredQuickTemplates}
                 isLoading={isLoading}
-                isEditMode={isQuickTemplateEditMode}
+                isEditMode={false}
                 onCopy={(content, title, id) => handleCopy(content, title, id)}
                 onEdit={handleOpenQuickTemplateDialog}
                 onDelete={handleDelete}

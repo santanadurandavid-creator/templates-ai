@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Search, UserCheck, Upload, Download, Plus, Edit3 } from 'lucide-react';
+import { Sparkles, Search, UserCheck, Upload, Download, Plus, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AITemplateModal } from './ai-template-modal';
 import { ImportExport } from './import-export';
@@ -9,13 +9,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { eventBus } from '@/lib/utils';
 import { useAppSettings } from '@/hooks/use-app-settings';
-import { cn } from '@/lib/utils';
 import { FollowUpDialog } from './follow-up-dialog';
 
 export function AppHeader() {
   const [isAiModalOpen, setAiModalOpen] = useState(false);
   const [isFollowUpModalOpen, setFollowUpModalOpen] = useState(false);
-  const { isQuickTemplateEditMode, toggleQuickTemplateEditMode } = useAppSettings();
+  const { isDarkMode, toggleTheme } = useAppSettings();
 
   const handleAddQuickTemplate = () => {
     eventBus.dispatch('open-quick-template-dialog');
@@ -59,14 +58,19 @@ export function AppHeader() {
             </Button>
           </AITemplateModal>
 
+          {/* Botón de tema claro/oscuro */}
           <Button
             variant="ghost"
             size="icon"
-            onClick={toggleQuickTemplateEditMode}
-            className={cn('h-9 w-9 transition-colors', isQuickTemplateEditMode && 'bg-accent text-accent-foreground')}
-            title="Modo Edición"
+            onClick={toggleTheme}
+            className="h-9 w-9 transition-colors hover:bg-accent/10 hover:text-accent"
+            title={isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
           >
-            <Edit3 className="h-5 w-5" />
+            {isDarkMode ? (
+              <Sun className="h-5 w-5 text-yellow-400" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
           </Button>
 
         </div>
